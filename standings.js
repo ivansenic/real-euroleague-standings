@@ -34,7 +34,9 @@ import { DOMParser } from "xmldom";
 // -----------------------------
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
-const overtimeGameIDs = [ /* e.g. 136, 192, ... */ ];
+const overtimeGameIDs = [
+  35, 75, 107, 117, 182, 190, 195
+];
 
 // -----------------------------
 // 1) Read XML from results.xml
@@ -163,7 +165,7 @@ function generateStandings(xmlData, overtimeIDs) {
       teams[homeTeamCode].h2h[awayTeamCode].ptsAgainst += awayScore;
       teams[awayTeamCode].h2h[homeTeamCode].ptsFor     += awayScore;
       teams[awayTeamCode].h2h[homeTeamCode].ptsAgainst += homeScore;
-    }
+    } 
   }
 
   // -----------------------------
@@ -311,7 +313,6 @@ function generateStandings(xmlData, overtimeIDs) {
   // 7) Build display fields (H2H, etc)
   // ---------------------------------
   finalStandings.forEach(team => {
-    console.log(team);
     let h2hWins = 0, h2hLosses = 0, h2hPointsFor = 0, h2hPointsAgainst = 0;
     Object.keys(team.h2h).forEach(oppCode => {
       const opp = finalStandings.find(t => t.code === oppCode);

@@ -10,7 +10,7 @@ export default function Home() {
           <h1 className="text-base font-semibold text-white">
             Real Euroleague Standings 2024/25
           </h1>
-          <p className="mt-2 max-w-4xl text-sm text-gray-500">
+          <p className="mt-2 max-w-4xl text-sm text-gray-300">
             Includes knows tiebreakers and results after {games} games.
           </p>
         </div>
