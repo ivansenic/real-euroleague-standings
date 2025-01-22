@@ -153,7 +153,7 @@ const Standings = ({ standings, teams }) => {
                     )})`
                   : "-"}
               </td>
-              <td>
+              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                 <button
                   disabled={!tiebreakers}
                   type="button"
@@ -169,15 +169,15 @@ const Standings = ({ standings, teams }) => {
                     }
                   }}
                 >
-                  Details
+                  {team.code === expandedTeam ? "-" : "+"}
                 </button>
               </td>
             </tr>
             {team.code === expandedTeam && (
               <tr className="bg-gray-800" key={`${team.code}-details`}>
                 <td className="hidden sm:table-cell"></td>
-                <td colSpan="9" className="px-3 py-4 text-sm">
-                  <table className="table-auto w-full sm:w-auto">
+                <td colSpan="9" className="px-3 py-4 text-sm w-max-content">
+                  <table className="table-auto sm:w-auto">
                     <thead>
                       <tr>
                         <th scope="col" className="px-3 py-2 text-sm font-semibold text-white text-left">
