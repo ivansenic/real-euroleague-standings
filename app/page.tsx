@@ -15,7 +15,7 @@ export default async function Home() {
   // state
   return (
     <div className="overflow-scroll items-center justify-items-center min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+      <main className="w-full flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="w-full">
           <h1 className="text-base font-semibold text-white">
             Real Euroleague Standings 2024/25
