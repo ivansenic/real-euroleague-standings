@@ -24,7 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Real Euroleague Standings</title>
+        <meta name="description" content="Includes known Euroleague 2024/25 tiebreakers in the standings."/>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

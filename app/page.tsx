@@ -1,10 +1,13 @@
 import classNames from "classnames";
 import standings from "../standings.js";
+import Head from "next/head";
 
 export default function Home() {
-  const games = standings.map((team) => team.wins + team.losses).reduce((a, b) => Math.max(a, b), 0);
+  const games = standings
+    .map((team) => team.wins + team.losses)
+    .reduce((a, b) => Math.max(a, b), 0);
   return (
-    <div className="overflow-scroll items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="overflow-scroll items-center justify-items-center min-h-screen p-4 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="w-full">
           <h1 className="text-base font-semibold text-white">
@@ -109,7 +112,6 @@ export default function Home() {
                   >
                     <span className="block sm:hidden">{team.code}</span>
                     <span className="hidden sm:block">{team.name}</span>
-                    
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {team.wins}
