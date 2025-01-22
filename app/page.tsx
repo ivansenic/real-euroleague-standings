@@ -2,7 +2,7 @@ import classNames from "classnames";
 import standings from "../standings.js";
 
 export default function Home() {
-  const games = standings[0].wins + standings[0].losses;
+  const games = standings.map((team) => team.wins + team.losses).reduce((a, b) => Math.max(a, b), 0);
   return (
     <div className="overflow-scroll items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -149,7 +149,7 @@ export default function Home() {
       </main>
       <footer className="pt-6 row-start-3 flex gap-6 flex-wrap items-center justify-center text-gray-500">
         <p>
-          Made by Ivan Senic and Chat GPT. Zvezda je život, sve drugo su
+          Made by Ivan Senić and Chat GPT. Zvezda je život, sve drugo su
           sitnice! 🔴 ⚪ 🔴 ⚪
         </p>
       </footer>
