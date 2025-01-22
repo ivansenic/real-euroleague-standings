@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import standings from "../standings.js";
-import Head from "next/head";
 
 export default function Home() {
   const games = standings
