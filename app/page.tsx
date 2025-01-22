@@ -1,6 +1,13 @@
 import classNames from "classnames";
 import generateStandingsFormXml from "../standings.js";
 
+const formatScoreDiff = (n: number) => {
+  if (n > 0) {
+    return `+${n}`;
+  }
+  return n;
+};
+
 export default async function Home() {
   const data = await fetch("https://api-live.euroleague.net/v1/results", {
     next: { revalidate: 60 * 60 * 24 },
@@ -127,7 +134,7 @@ export default async function Home() {
                     {(team.wins / (team.wins + team.losses)).toFixed(2)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    {team.scoreDiff}
+                    {formatScoreDiff(team.scoreDiff)}
                   </td>
                   <>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 hidden sm:table-cell">
@@ -137,14 +144,12 @@ export default async function Home() {
                       {tiebreakers ? team.h2hLosses : "-"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 hidden sm:table-cell">
-                      {tiebreakers ? team.h2hScoreDiff : "-"}
+                      {tiebreakers ? formatScoreDiff(team.h2hScoreDiff) : "-"}
                     </td>
                   </>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 table-cell sm:hidden">
                     {tiebreakers
-                      ? `${team.h2hWins}-${team.h2hLosses} (${
-                          (team.h2hScoreDiff > 0 && "+") || ""
-                        }${team.h2hScoreDiff})`
+                      ? `${team.h2hWins}-${team.h2hLosses} (${formatScoreDiff(team.h2hScoreDiff)})`
                       : "-"}
                   </td>
                 </tr>
