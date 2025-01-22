@@ -31,7 +31,11 @@ export default function RootLayout({
           name="description"
           content="Includes known Euroleague 2024/25 tiebreakers in the standings."
         />
-        <meta name="google-adsense-account" content="ca-pub-7539731426300759" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7539731426300759"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
