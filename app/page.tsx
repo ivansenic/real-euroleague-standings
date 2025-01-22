@@ -4,9 +4,9 @@ import standings from "../standings.js";
 export default function Home() {
   const games = standings[0].wins + standings[0].losses;
   return (
-    <div className="items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="overflow-scroll items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div>
+        <div className="w-full">
           <h1 className="text-base font-semibold text-white">
             Real Euroleague Standings 2024/25
           </h1>
@@ -14,18 +14,18 @@ export default function Home() {
             Includes knows tiebreakers and results after {games} games.
           </p>
         </div>
-        <table className="min-w-full divide-y divide-gray-700">
+        <table className="min-w-full table-auto divide-y divide-gray-700">
           <thead>
             <tr>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white"
               >
                 #
               </th>
               <th
                 scope="col"
-                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
               >
                 Team
               </th>
@@ -34,18 +34,18 @@ export default function Home() {
                 className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                 title="Total Wins"
               >
-                Wins
+                W
               </th>
               <th
                 scope="col"
                 className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                 title="Total Losses"
               >
-                Losses
+                L
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white hidden sm:table-cell"
                 title="Winning Percentage"
               >
                 PCT
@@ -57,26 +57,35 @@ export default function Home() {
               >
                 +/-
               </th>
+              <>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-white hidden sm:table-cell"
+                  title="Tie-breaker Wins"
+                >
+                  TBW
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-white hidden sm:table-cell"
+                  title="Tie-breaker Losses"
+                >
+                  TBL
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-white hidden sm:table-cell"
+                  title="Tie-breaker Score Difference"
+                >
+                  TB +/-
+                </th>
+              </>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                title="Tie-breaker Wins"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white table-cell sm:hidden"
+                title="Tie-breaker"
               >
-                TB Wins
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                title="Tie-breaker Losses"
-              >
-                TB Losses
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                title="Tie-breaker Score Difference"
-              >
-                TB +/-
+                TB
               </th>
             </tr>
           </thead>
@@ -94,8 +103,13 @@ export default function Home() {
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {index + 1}
                   </td>
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
-                    {team.name}
+                  <td
+                    className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white"
+                    title={team.name}
+                  >
+                    <span className="block sm:hidden">{team.code}</span>
+                    <span className="hidden sm:block">{team.name}</span>
+                    
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {team.wins}
@@ -103,20 +117,29 @@ export default function Home() {
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {team.losses}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300  hidden sm:table-cell">
                     {(team.wins / (team.wins + team.losses)).toFixed(2)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {team.scoreDiff}
                   </td>
-                  <td className={classNames("whitespace-nowrap px-3 py-4 text-sm text-gray-300")}>
-                    {tiebreakers ? team.h2hWins : "-"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    {tiebreakers ? team.h2hLosses : "-"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    {tiebreakers ? team.h2hScoreDiff : "-"}
+                  <>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 hidden sm:table-cell">
+                      {tiebreakers ? team.h2hWins : "-"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 hidden sm:table-cell">
+                      {tiebreakers ? team.h2hLosses : "-"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 hidden sm:table-cell">
+                      {tiebreakers ? team.h2hScoreDiff : "-"}
+                    </td>
+                  </>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 table-cell sm:hidden">
+                    {tiebreakers
+                      ? `${team.h2hWins}-${team.h2hLosses} (${
+                          (team.h2hScoreDiff > 0 && "+") || ""
+                        }${team.h2hScoreDiff})`
+                      : "-"}
                   </td>
                 </tr>
               );
