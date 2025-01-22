@@ -150,8 +150,7 @@ export default function Home() {
       </main>
       <footer className="pt-6 row-start-3 flex gap-6 flex-wrap items-center justify-center text-gray-500">
         <p>
-          Made by Ivan Senić and Chat GPT. Zvezda je život, sve drugo su
-          sitnice! 🔴 ⚪ 🔴 ⚪
+          Made in Dorćol. Zvezda je život, sve drugo su sitnice! 🔴 ⚪ 🔴 ⚪
         </p>
       </footer>
     </div>
