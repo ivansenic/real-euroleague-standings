@@ -26,7 +26,6 @@
  *      TEAM | W | L | OverallDiff | H2H_W | H2H_L | H2H_Diff
  */
 
-import { readFileSync } from "fs";
 import { DOMParser } from "xmldom";
 
 // -----------------------------
@@ -37,11 +36,6 @@ import { DOMParser } from "xmldom";
 const overtimeGameIDs = [
   35, 75, 107, 117, 182, 190, 195
 ];
-
-// -----------------------------
-// 1) Read XML from results.xml
-// -----------------------------
-const xmlString = readFileSync("results.xml", "utf8");
 
 // -----------------------------
 // 2) Generate Standings
@@ -332,6 +326,6 @@ function generateStandings(xmlData, overtimeIDs) {
   return finalStandings;
 }
 
-// Run the function
-const standings = generateStandings(xmlString, overtimeGameIDs);
-export default standings;
+// Expose the function
+const generateStandingsFormXml = (xmlData) => generateStandings(xmlData, overtimeGameIDs);
+export default generateStandingsFormXml;

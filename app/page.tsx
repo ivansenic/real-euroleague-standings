@@ -1,7 +1,10 @@
 import classNames from "classnames";
-import standings from "../standings.js";
+import generateStandingsFormXml from "../standings.js";
 
-export default function Home() {
+export default async function Home() {
+  const data = await fetch("https://api-live.euroleague.net/v1/results");
+  const xml = await data.text();
+  const standings = generateStandingsFormXml(xml);
   const games = standings
     .map((team) => team.wins + team.losses)
     .reduce((a, b) => Math.max(a, b), 0);
