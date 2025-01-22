@@ -214,8 +214,10 @@ function generateStandings(xmlData, overtimeIDs) {
       const miniTable = buildMiniTable(subGroup);
       
       // 1) Best record in head-to-head games
-      if (miniTable[a.code].h2hWins !== miniTable[b.code].h2hWins) {
-        return miniTable[b.code].h2hWins - miniTable[a.code].h2hWins;
+      const aPercentage = miniTable[a.code].h2hWins / (miniTable[a.code].h2hWins + miniTable[a.code].h2hLosses);
+      const bPercentage = miniTable[b.code].h2hWins / (miniTable[b.code].h2hWins + miniTable[b.code].h2hLosses);
+      if (aPercentage !== bPercentage) {
+        return bPercentage - aPercentage;
       }
 
       // 2) Higher cumulative score difference in h2h
