@@ -6,14 +6,14 @@ export default function Home() {
     .map((team) => team.wins + team.losses)
     .reduce((a, b) => Math.max(a, b), 0);
   return (
-    <div className="overflow-scroll items-center justify-items-center min-h-screen p-4 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="overflow-scroll items-center justify-items-center min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="w-full">
           <h1 className="text-base font-semibold text-white">
             Real Euroleague Standings 2024/25
           </h1>
           <p className="mt-2 max-w-4xl text-sm text-gray-300">
-            Includes knows tiebreakers and results after {games} games.
+            Includes known tiebreakers and results after {games} games.
           </p>
         </div>
         <table className="min-w-full table-auto divide-y divide-gray-700">
