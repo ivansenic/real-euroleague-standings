@@ -323,7 +323,7 @@ function generateStandings(xmlData, overtimeIDs) {
     team.scoreDiff = team.ptsFor - team.ptsAgainst;
   });
 
-  return finalStandings;
+  return {standings: finalStandings, teams: teamArray };
 }
 
 // Expose the function
