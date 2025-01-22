@@ -2,7 +2,9 @@ import classNames from "classnames";
 import generateStandingsFormXml from "../standings.js";
 
 export default async function Home() {
-  const data = await fetch("https://api-live.euroleague.net/v1/results");
+  const data = await fetch("https://api-live.euroleague.net/v1/results", {
+    next: { revalidate: 60 * 60 * 24 },
+  });
   const xml = await data.text();
   const standings = generateStandingsFormXml(xml);
   const games = standings
