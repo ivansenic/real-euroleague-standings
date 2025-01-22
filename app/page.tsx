@@ -1,100 +1,134 @@
-import Image from "next/image";
+import classNames from "classnames";
+import standings from "../standings.js";
 
 export default function Home() {
+  const games = standings[0].wins + standings[0].losses;
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div>
+          <h1 className="text-base font-semibold text-white">
+            Real Euroleague Standings 2024/25
+          </h1>
+          <p className="mt-2 max-w-4xl text-sm text-gray-500">
+            Includes knows tiebreakers and results after {games} games.
+          </p>
         </div>
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+              >
+                #
+              </th>
+              <th
+                scope="col"
+                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
+              >
+                Team
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Total Wins"
+              >
+                Wins
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Total Losses"
+              >
+                Losses
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Winning Percentage"
+              >
+                PCT
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Total Score Difference"
+              >
+                +/-
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Tie-breaker Wins"
+              >
+                TB Wins
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Tie-breaker Losses"
+              >
+                TB Losses
+              </th>
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                title="Tie-breaker Score Difference"
+              >
+                TB +/-
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-800">
+            {standings.map((team, index) => {
+              const tiebreakers = team.h2hWins + team.h2hLosses > 0;
+              return (
+                <tr
+                  key={team.code}
+                  className={classNames(
+                    index < 6 && "bg-green-800",
+                    index >= 6 && index < 10 && "bg-yellow-700"
+                  )}
+                >
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {index + 1}
+                  </td>
+                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
+                    {team.name}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {team.wins}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {team.losses}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {(team.wins / (team.wins + team.losses)).toFixed(2)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {team.scoreDiff}
+                  </td>
+                  <td className={classNames("whitespace-nowrap px-3 py-4 text-sm text-gray-300")}>
+                    {tiebreakers ? team.h2hWins : "-"}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {tiebreakers ? team.h2hLosses : "-"}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {tiebreakers ? team.h2hScoreDiff : "-"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className="pt-6 row-start-3 flex gap-6 flex-wrap items-center justify-center text-gray-500">
+        <p>
+          Made by Ivan Senic and Chat GPT. Zvezda je život, sve drugo su
+          sitnice! 🔴 ⚪ 🔴 ⚪
+        </p>
       </footer>
     </div>
   );
