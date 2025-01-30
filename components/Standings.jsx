@@ -3,9 +3,8 @@
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import classNames from "classnames";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
@@ -268,4 +267,12 @@ const Standings = ({ standings, teams }) => {
   );
 };
 
-export default Standings;
+const StandingsWithSuspense = (props) => {
+  return (
+    <Suspense>
+      <Standings {...props} />
+    </Suspense>
+  );
+};
+
+export default StandingsWithSuspense;
