@@ -16,6 +16,15 @@ export const metadata: Metadata = {
   title: "Real Euroleague Standings",
   description: "Includes known Euroleague 2024/25 tiebreakers in the standings.",
   keywords: ["euroleague", "basketball", "standings", "table"],
+  openGraph: {
+    title: "Real Euroleague Standings",
+    description: "Includes known Euroleague 2024/25 tiebreakers in the standings.",
+    images: [
+      {
+        url: "https://euroleague-standings.com/open-graph.png"
+      }
+    ]
+  }
 };
 
 export default function RootLayout({
