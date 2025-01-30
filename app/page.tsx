@@ -1,5 +1,12 @@
+import { Viewport } from "next";
 import generateStandingsFormXml from "../standings.js";
 import Standings from "@/components/Standings.jsx";
+
+export const viewport: Viewport = {
+  themeColor: 'black',
+  initialScale: 1.0,
+  width: 'device-width',
+}
 
 export default async function Home() {
   // consts
