@@ -2,6 +2,7 @@
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import classNames from "classnames";
+import Image from "next/image";
 import React, { useState } from "react";
 
 const formatScoreDiff = (n) => {
@@ -123,8 +124,11 @@ const Standings = ({ standings, teams }) => {
                   className="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white"
                   title={team.name}
                 >
-                  <span className="block sm:hidden">{team.code}</span>
-                  <span className="hidden sm:block">{team.name}</span>
+                  <div className="flex gap-2 items-center align-middle">
+                    <span className="relative w-6 h-6 md:w-8 md:h-8"><Image src={`/team-logos/${team.code}.webp`} fill alt={team.name}/></span>
+                    <span className="block sm:hidden">{team.code}</span>
+                    <span className="hidden sm:block">{team.name}</span>
+                  </div>
                 </td>
                 <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-300">
                   {team.wins}
