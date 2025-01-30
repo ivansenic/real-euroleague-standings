@@ -3,6 +3,8 @@
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import classNames from "classnames";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const formatScoreDiff = (n) => {
@@ -26,7 +28,20 @@ const getTieBreakerDetails = (teamCode, standings, teams) => {
 };
 
 const Standings = ({ standings, teams }) => {
-  const [expandedTeam, setExpandedTeam] = useState(undefined);
+  // routing to the expanded team
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const expandedTeam = searchParams.get("team");
+  const setExpandedTeam = (code) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (code) {
+      newParams.set("team", code);
+    } else {
+      newParams.delete("team");
+    }
+    router.push(`/?${newParams}`, { scroll: false });
+  }
+
   const isSmallScreen = useBreakpoint("sm");
   return (
     <table className="min-w-full table-auto divide-y divide-gray-700">
@@ -186,8 +201,8 @@ const Standings = ({ standings, teams }) => {
                   )}
                 </td>
               </tr>
-              {team.code === expandedTeam && (
-                <tr className="bg-gray-800" key={`${team.code}-details`}>
+              {team.code === expandedTeam && tiebreakers && (
+                <tr className="bg-white/5" key={`${team.code}-details`}>
                   <td className="hidden sm:table-cell"></td>
                   <td colSpan="9" className="px-2 py-4 text-sm w-max-content">
                     <table className="table-auto w-full sm:w-auto">
