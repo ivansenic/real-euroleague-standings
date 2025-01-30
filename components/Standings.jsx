@@ -35,7 +35,6 @@ const Standings = ({ standings, teams }) => {
             scope="col"
             className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white"
           >
-            #
           </th>
           <th
             scope="col"
@@ -108,15 +107,17 @@ const Standings = ({ standings, teams }) => {
           const tiebreakers = team.h2hWins + team.h2hLosses > 0;
           return (
             <React.Fragment key={team.code}>
-              <tr
-                key={`${team.code}-standings`}
-                className={classNames(
-                  index < 6 && "bg-green-800",
-                  index >= 6 && index < 10 && "bg-yellow-700"
-                )}
-              >
+              <tr key={`${team.code}-standings`}>
                 <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-300">
-                  {index + 1}
+                  <div
+                    className={classNames(
+                      "rounded-full p-1 w-8 h-8 text-center content-center font-medium",
+                      index < 6 && "bg-green-700",
+                      index >= 6 && index < 10 && "bg-yellow-600"
+                    )}
+                  >
+                    {index + 1}
+                  </div>
                 </td>
                 <td
                   className="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white"
