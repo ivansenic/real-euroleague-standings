@@ -1,8 +1,8 @@
 import Standings from "@/components/Standings.jsx";
-import { Viewport } from "next";
+import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import Link from "next/link.js";
-import { generateEuroleagueStandingsFormXml } from "../standings.js";
+import { generateEurocupStandingsFormXml } from "../../standings.js";
 
 export const viewport: Viewport = {
   themeColor: "black",
@@ -10,16 +10,42 @@ export const viewport: Viewport = {
   width: "device-width",
 };
 
+export const metadata: Metadata = {
+  title: "Real Eurocup Standings",
+  description: "Includes known Eurocup 2024/25 tiebreakers in the standings.",
+  keywords: ["eurocup", "basketball", "standings", "table"],
+  openGraph: {
+    title: "Real Eurocup Standings",
+    description: "Includes known Eurocup 2024/25 tiebreakers in the standings.",
+    images: [
+      {
+        url: "https://euroleague-standings.com/open-graph.png",
+      },
+    ],
+  },
+};
+
 export default async function Home() {
   // consts
-  const data = await fetch("https://api-live.euroleague.net/v1/results", {
-    next: { revalidate: 15 * 60 },
-  });
+  const data = await fetch(
+    "https://api-live.euroleague.net/v1/results?seasoncode=U2024",
+    {
+      next: { revalidate: 15 * 60 },
+    }
+  );
   const xml = await data.text();
-  const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
-  const games = standings
+  const { standings: standingsA, teams: teamsA } = generateEurocupStandingsFormXml(xml, "A");
+  const { standings: standingsB, teams: teamsB } = generateEurocupStandingsFormXml(xml, "B");
+
+  const gamesA = standingsA
     .map((team) => team.wins + team.losses)
     .reduce((a, b) => Math.max(a, b), 0);
+
+  const gamesB = standingsB
+    .map((team) => team.wins + team.losses)
+    .reduce((a, b) => Math.max(a, b), 0);
+
+  const games = Math.max(gamesA, gamesB);
 
   // state
   return (
@@ -27,18 +53,25 @@ export default async function Home() {
       <main>
         <div className="w-full flex gap-2 items-center mb-4">
           <div className="relative w-12 h-12">
-            <Image src="/euroleague.png" alt="Euroleague" fill />
+            <Image src="/eurocup.png" alt="Euroleague" fill />
           </div>
           <div>
             <h1 className="text-base font-semibold text-white">
-              Real Euroleague Standings 2024/25
+              Real Eurocup Standings 2024/25
             </h1>
             <p className="max-w-4xl text-sm text-gray-300">
               Includes known tiebreakers and results after {games} games.
             </p>
           </div>
         </div>
-        <Standings standings={standings} teams={teams} playOffPosition={6}  playInPosition={10}/>
+        <div className="pt-4">
+          <h1 className="font-medium">Group A</h1>
+          <Standings standings={standingsA} teams={teamsA} playOffPosition={8}/>
+        </div>
+        <div className="pt-4">
+          <h1 className="font-medium">Group B</h1>
+          <Standings standings={standingsB} teams={teamsB} playOffPosition={8}/>
+        </div>
       </main>
 
       <footer className="pt-8 flex flex-col flex-wrap gap-1 items-center justify-center text-gray-500">

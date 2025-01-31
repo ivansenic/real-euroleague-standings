@@ -4,7 +4,7 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { teamCodeToAbbreviation } from "@/utils/utils";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense } from "react";
 
 const formatScoreDiff = (n) => {
@@ -27,9 +27,10 @@ const getTieBreakerDetails = (teamCode, standings, teams) => {
   return result;
 };
 
-const Standings = ({ standings, teams }) => {
+const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
   // routing to the expanded team
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const expandedTeam = searchParams.get("team");
   const setExpandedTeam = (code) => {
@@ -39,7 +40,7 @@ const Standings = ({ standings, teams }) => {
     } else {
       newParams.delete("team");
     }
-    router.push(`/?${newParams}`, { scroll: false });
+    router.push(`${pathname}?${newParams}`, { scroll: false });
   }
 
   const isSmallScreen = useBreakpoint("sm");
@@ -121,6 +122,8 @@ const Standings = ({ standings, teams }) => {
       <tbody className="divide-y divide-gray-800">
         {standings.map((team, index) => {
           const tiebreakers = team.h2hWins + team.h2hLosses > 0;
+          const playOff = playOffPosition !== undefined && index < playOffPosition;
+          const playIn = !playOff && playInPosition !== undefined && index < playInPosition;
           return (
             <React.Fragment key={team.code}>
               <tr key={`${team.code}-standings`}>
@@ -128,8 +131,8 @@ const Standings = ({ standings, teams }) => {
                   <div
                     className={classNames(
                       "rounded-full p-1 w-8 h-8 text-center content-center font-medium",
-                      index < 6 && "bg-green-700",
-                      index >= 6 && index < 10 && "bg-yellow-600"
+                      playOff && "bg-green-700",
+                      playIn && index < 10 && "bg-yellow-600"
                     )}
                   >
                     {index + 1}
@@ -140,7 +143,7 @@ const Standings = ({ standings, teams }) => {
                   title={team.name}
                 >
                   <div className="flex gap-2 items-center align-middle">
-                    <span className="relative w-6 h-6 md:w-8 md:h-8"><Image src={`/team-logos/${team.code}.webp`} fill alt={team.name}/></span>
+                    <span className="relative w-6 h-6 md:w-8 md:h-8"><Image src={`/team-logos/${team.code}.webp`} fill alt={""}/></span>
                     <span className="block sm:hidden">{teamCodeToAbbreviation(team.code)}</span>
                     <span className="hidden sm:block">{team.name}</span>
                   </div>
