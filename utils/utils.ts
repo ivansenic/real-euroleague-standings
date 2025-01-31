@@ -3,8 +3,35 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
     case "BAS":
       return "BKN";
 
+    case "BAH":
+      return "BKS";
+
+    case "BES":
+      return "BJK";
+
+    case "BOU":
+      return "JLB";
+    
+    case "CAN":
+      return "DGC";
+
+    case "CLU":
+      return "UBT";
+
     case "IST":
       return "EFS";
+
+    case "JER":
+      return "JLM";
+
+    case "JOV":
+      return "CJB";
+
+    case "LKB":
+      return "LIE";
+    
+    case "LJU":
+      return "COL";
 
     case "MAD":
       return "RBM";
@@ -17,6 +44,9 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
 
     case "MUN":
       return "BAY";
+
+    case "PAM":
+      return "VBC";
 
     case "PAN":
       return "PAO";
@@ -32,6 +62,21 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
 
     case "TEL":
       return "MTA";
+    
+    case "TRN":
+      return "TRE";
+    
+    case "TSO":
+      return "SOP";
+    
+    case "TTK":
+      return "TTA";
+    
+    case "VNC":
+      return "URV";
+
+    case "WOL":
+      return "WLV";
 
     default:
       return teamCode;

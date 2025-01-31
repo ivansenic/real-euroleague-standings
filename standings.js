@@ -33,14 +33,16 @@ import { DOMParser } from "xmldom";
 // -----------------------------
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
-const overtimeGameIDs = [
+const euroleagueOvertimeGameIDs = [
   35, 75, 107, 117, 182, 190, 195
+];
+const eurocupOvertimeGameIDs = [
 ];
 
 // -----------------------------
 // 2) Generate Standings
 // -----------------------------
-function generateStandings(xmlData, overtimeIDs) {
+function generateStandings(xmlData, overtimeIDs, filter) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlData, "application/xml");
   const gameNodes = xmlDoc.getElementsByTagName("game");
@@ -100,6 +102,16 @@ function generateStandings(xmlData, overtimeIDs) {
       // If the game hasn't been played, skip it.
       continue;
     }
+
+    // Filter logic
+    if (filter) {
+      const field = filter.field;
+      const value = filter.value;
+      const actualValue = game.getElementsByTagName(field)[0].textContent;
+      if (actualValue !== value) {
+        continue;
+      }
+    } 
 
     // Ensure we have entries for both teams
     initTeamIfNotExists(homeTeamCode, homeTeamName);
@@ -329,5 +341,5 @@ function generateStandings(xmlData, overtimeIDs) {
 }
 
 // Expose the function
-const generateStandingsFormXml = (xmlData) => generateStandings(xmlData, overtimeGameIDs);
-export default generateStandingsFormXml;
+export const generateEuroleagueStandingsFormXml = (xmlData) => generateStandings(xmlData, euroleagueOvertimeGameIDs);
+export const generateEurocupStandingsFormXml = (xmlData, group) => generateStandings(xmlData, eurocupOvertimeGameIDs, {field: "group", value: group});
