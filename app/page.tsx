@@ -41,8 +41,8 @@ export default async function Home() {
 
       <footer className="pt-8 flex flex-col flex-wrap gap-1 items-center justify-center text-gray-500">
         <div>
-          <p>
-            {`Copyright © ${new Date().getFullYear()} ISE ENGINEERING LIMITED.`}
+          <p className="text-center">
+            {`Copyright © ${new Date().getFullYear()} ISE ENGINEERING LIMITED DOO.`}
           </p>
         </div>
         <div className="flex gap-2">
