@@ -1,7 +1,7 @@
 import Standings from "@/components/Standings.jsx";
+import Footer from "@/components/Footer.jsx";
 import { Viewport } from "next";
 import Image from "next/image.js";
-import Link from "next/link.js";
 import { generateEuroleagueStandingsFormXml } from "../standings.js";
 
 export const viewport: Viewport = {
@@ -38,33 +38,14 @@ export default async function Home() {
             </p>
           </div>
         </div>
-        <Standings standings={standings} teams={teams} playOffPosition={6}  playInPosition={10}/>
+        <Standings
+          standings={standings}
+          teams={teams}
+          playOffPosition={6}
+          playInPosition={10}
+        />
       </main>
-
-      <footer className="pt-8 flex flex-col flex-wrap gap-1 items-center justify-center text-gray-500">
-        <div>
-          <p className="text-center">
-            {`Copyright © ${new Date().getFullYear()} ISE ENGINEERING LIMITED DOO.`}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <a
-            href="https://github.com/ivansenic/real-euroleague-standings"
-            target="_blank"
-            rel="noreferrer"
-            className="underline hover:no-underline hover:text-gray-400"
-          >
-            View on GitHub
-          </a>
-          <span>|</span>
-          <Link
-            href="/privacy-policy"
-            className="underline hover:no-underline hover:text-gray-400"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

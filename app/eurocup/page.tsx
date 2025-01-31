@@ -3,6 +3,7 @@ import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import Link from "next/link.js";
 import { generateEurocupStandingsFormXml } from "../../standings.js";
+import Footer from "@/components/Footer.jsx";
 
 export const viewport: Viewport = {
   themeColor: "black",
@@ -34,8 +35,10 @@ export default async function Home() {
     }
   );
   const xml = await data.text();
-  const { standings: standingsA, teams: teamsA } = generateEurocupStandingsFormXml(xml, "A");
-  const { standings: standingsB, teams: teamsB } = generateEurocupStandingsFormXml(xml, "B");
+  const { standings: standingsA, teams: teamsA } =
+    generateEurocupStandingsFormXml(xml, "A");
+  const { standings: standingsB, teams: teamsB } =
+    generateEurocupStandingsFormXml(xml, "B");
 
   const gamesA = standingsA
     .map((team) => team.wins + team.losses)
@@ -66,38 +69,22 @@ export default async function Home() {
         </div>
         <div className="pt-4">
           <h1 className="font-medium">Group A</h1>
-          <Standings standings={standingsA} teams={teamsA} playOffPosition={8}/>
+          <Standings
+            standings={standingsA}
+            teams={teamsA}
+            playOffPosition={8}
+          />
         </div>
         <div className="pt-4">
           <h1 className="font-medium">Group B</h1>
-          <Standings standings={standingsB} teams={teamsB} playOffPosition={8}/>
+          <Standings
+            standings={standingsB}
+            teams={teamsB}
+            playOffPosition={8}
+          />
         </div>
       </main>
-
-      <footer className="pt-8 flex flex-col flex-wrap gap-1 items-center justify-center text-gray-500">
-        <div>
-          <p className="text-center">
-            {`Copyright © ${new Date().getFullYear()} ISE ENGINEERING LIMITED DOO.`}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <a
-            href="https://github.com/ivansenic/real-euroleague-standings"
-            target="_blank"
-            rel="noreferrer"
-            className="underline hover:no-underline hover:text-gray-400"
-          >
-            View on GitHub
-          </a>
-          <span>|</span>
-          <Link
-            href="/privacy-policy"
-            className="underline hover:no-underline hover:text-gray-400"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
