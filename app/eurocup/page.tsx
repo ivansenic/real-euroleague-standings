@@ -73,7 +73,8 @@ export default async function Home() {
           <Standings
             standings={standingsA}
             teams={teamsA}
-            playOffPosition={8}
+            playOffPosition={2}
+            playInPosition={6}
           />
         </div>
         <div className="pt-4">
@@ -81,7 +82,8 @@ export default async function Home() {
           <Standings
             standings={standingsB}
             teams={teamsB}
-            playOffPosition={8}
+            playOffPosition={2}
+            playInPosition={6}
           />
         </div>
       </main>
