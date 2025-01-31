@@ -1,6 +1,7 @@
 "use client";
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { teamCodeToAbbreviation } from "@/utils/utils";
 import classNames from "classnames";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -140,7 +141,7 @@ const Standings = ({ standings, teams }) => {
                 >
                   <div className="flex gap-2 items-center align-middle">
                     <span className="relative w-6 h-6 md:w-8 md:h-8"><Image src={`/team-logos/${team.code}.webp`} fill alt={team.name}/></span>
-                    <span className="block sm:hidden">{team.code}</span>
+                    <span className="block sm:hidden">{teamCodeToAbbreviation(team.code)}</span>
                     <span className="hidden sm:block">{team.name}</span>
                   </div>
                 </td>
