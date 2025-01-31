@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => {
   return (
     <footer className="pt-8 flex flex-col flex-wrap gap-1 items-center justify-center text-gray-500">

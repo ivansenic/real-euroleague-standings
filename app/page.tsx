@@ -1,5 +1,6 @@
-import Standings from "@/components/Standings.jsx";
 import Footer from "@/components/Footer.jsx";
+import Navigation from "@/components/Navigation.jsx";
+import Standings from "@/components/Standings.jsx";
 import { Viewport } from "next";
 import Image from "next/image.js";
 import { generateEuroleagueStandingsFormXml } from "../standings.js";
@@ -25,6 +26,7 @@ export default async function Home() {
   return (
     <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
       <main>
+        <Navigation />
         <div className="w-full flex gap-2 items-center mb-4">
           <div className="relative w-12 h-12">
             <Image src="/euroleague.png" alt="Euroleague" fill />

@@ -1,9 +1,9 @@
+import Footer from "@/components/Footer.jsx";
+import Navigation from "@/components/Navigation.jsx";
 import Standings from "@/components/Standings.jsx";
 import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
-import Link from "next/link.js";
 import { generateEurocupStandingsFormXml } from "../../standings.js";
-import Footer from "@/components/Footer.jsx";
 
 export const viewport: Viewport = {
   themeColor: "black",
@@ -53,6 +53,7 @@ export default async function Home() {
   // state
   return (
     <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+      <Navigation />
       <main>
         <div className="w-full flex gap-2 items-center mb-4">
           <div className="relative w-12 h-12">
