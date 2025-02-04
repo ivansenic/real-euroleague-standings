@@ -37,6 +37,7 @@ const euroleagueOvertimeGameIDs = [
   35, 75, 107, 117, 182, 190, 195
 ];
 const eurocupOvertimeGameIDs = [
+  1, 12, 41, 54, 105, 113, 115, 135
 ];
 
 // -----------------------------
