@@ -1,8 +1,8 @@
-import generateStandingsFormXml from "./standings.js";
+import { generateEuroleagueStandingsFormXml } from "./standings.js";
 
 fetch("https://api-live.euroleague.net/v1/results")
   .then((response) => response.text())
-  .then((text) => generateStandingsFormXml(text))
+  .then((text) => generateEuroleagueStandingsFormXml(text))
   .then(({standings, teams}) => {
     console.log("TEAMS");
     teams.forEach((t) => {
