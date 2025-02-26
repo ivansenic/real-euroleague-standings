@@ -150,7 +150,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
     <>
       <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
         <div className="flex flex-col-reverse lg:flex-row w-full gap-4 lg:gap-8">
-          <div className="grow flex flex-row gap-2 justify-between overflow-auto">
+          <div className="grow flex flex-row gap-2 justify-between overflow-auto py-2 lg:py-0">
             {standings.map((team) => {
               return (
                 <TeamBox
@@ -172,7 +172,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
             >
               <span
                 aria-hidden="true"
-                className="pointer-events-none inline-block size-5 transform rounded-full bg-gray-300 shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5 group-data-[checked]:bg-white"
+                className="pointer-events-none inline-block size-5 transform rounded-full bg-white opacity-50 shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5 group-data-[checked]:opacity-100"
               />
             </Switch>
             <Label as="span" className="ml-3 text-sm">
@@ -384,20 +384,18 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
                         title="Tie-break opponent"
                         details={tieBreakerDetails}
                       />
-                      {!predictionModeEnabled && (
-                        <button
-                          type="button"
-                          className="mt-2 mx-3 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
-                          onClick={() =>
-                            enterTeamsPredictionMode([
-                              team.code,
-                              ...tieBreakerDetails.map((t) => t.code),
-                            ])
-                          }
-                        >
-                          View in mini standings mode
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        className="mt-2 mx-3 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
+                        onClick={() =>
+                          enterTeamsPredictionMode([
+                            team.code,
+                            ...tieBreakerDetails.map((t) => t.code),
+                          ])
+                        }
+                      >
+                        View in mini standings mode
+                      </button>
                     </td>
                   </tr>
                 )}
