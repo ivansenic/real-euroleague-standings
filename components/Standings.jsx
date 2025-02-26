@@ -6,7 +6,7 @@ import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useCallback } from "react";
+import React, { Suspense, useCallback, useMemo } from "react";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
@@ -97,10 +97,14 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
   const teamCodes = teams.map((team) => team.code);
   const predictionMode = searchParams.get("prediction");
   const predictionModeEnabled = predictionMode !== null;
-  const predictionModeTeams =
-    (predictionMode &&
-      predictionMode.split(",").filter((c) => teamCodes.includes(c))) ||
-    [];
+
+  const predictionModeTeams = useMemo(() => {
+    if (predictionModeEnabled) {
+      return predictionMode.split(",").filter((c) => teamCodes.includes(c));
+    } else {
+      return [];
+    }
+  }, [predictionMode, predictionModeEnabled, teamCodes]);
 
   // prediction functions
   const togglePredictionMode = useCallback(() => {
@@ -146,32 +150,17 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
     <>
       <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
         <div className="flex flex-col-reverse lg:flex-row w-full gap-4 lg:gap-8">
-          <div className="grow flex flex-row gap-1 justify-between overflow-auto">
-            {teams.map((team) => {
-              const isPredicted =
-                predictionModeTeams?.includes(team.code) || false;
+          <div className="grow flex flex-row gap-2 justify-between overflow-auto">
+            {standings.map((team) => {
               return (
-                <button
+                <TeamBox
                   key={team.code}
-                  disabled={!predictionModeEnabled}
-                  type="button"
-                  className={classNames(
-                    "rounded-full inline-flex px-2 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed",
-                    isPredicted && "bg-gray-700"
-                  )}
-                  onClick={() => toggleTeamPrediction(team.code)}
-                >
-                  {isLargeScreen && (
-                    <Image
-                      src={`/team-logos/${team.code}.webp`}
-                      width={20}
-                      height={20}
-                      alt={teamCodeToAbbreviation(team.code)}
-                      className="mr-1"
-                    />
-                  )}
-                  <span>{teamCodeToAbbreviation(team.code)}</span>
-                </button>
+                  code={team.code}
+                  showIcon={isLargeScreen}
+                  enabled={predictionModeEnabled}
+                  selected={predictionModeTeams.includes(team.code)}
+                  onSelected={() => toggleTeamPrediction(team.code)}
+                />
               );
             })}
           </div>
@@ -179,11 +168,11 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
             <Switch
               checked={predictionModeEnabled}
               onChange={togglePredictionMode}
-              className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 data-[checked]:bg-gray-700"
+              className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 data-[checked]:bg-gray-700"
             >
               <span
                 aria-hidden="true"
-                className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
+                className="pointer-events-none inline-block size-5 transform rounded-full bg-gray-300 shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5 group-data-[checked]:bg-white"
               />
             </Switch>
             <Label as="span" className="ml-3 text-sm">
@@ -398,7 +387,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
                       {!predictionModeEnabled && (
                         <button
                           type="button"
-                          className="mt-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
+                          className="mt-2 mx-3 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
                           onClick={() =>
                             enterTeamsPredictionMode([
                               team.code,
@@ -468,6 +457,35 @@ const SmallTable = (props) => {
         })}
       </tbody>
     </table>
+  );
+};
+
+const TeamBox = (props) => {
+  const { code, showIcon, enabled, selected, onSelected } = props;
+  return (
+    <div className="flex items-center">
+      <button
+        key={code}
+        disabled={!enabled}
+        type="button"
+        className={classNames(
+          "rounded-full inline-flex px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed",
+          selected && "bg-gray-700"
+        )}
+        onClick={onSelected}
+      >
+        {showIcon && (
+          <Image
+            src={`/team-logos/${code}.webp`}
+            width={20}
+            height={20}
+            alt={teamCodeToAbbreviation(code)}
+            className="mr-1"
+          />
+        )}
+        <span>{teamCodeToAbbreviation(code)}</span>
+      </button>
+    </div>
   );
 };
 
