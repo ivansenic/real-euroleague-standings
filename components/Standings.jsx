@@ -2,11 +2,11 @@
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { teamCodeToAbbreviation } from "@/utils/utils";
+import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useCallback } from "react";
-import { Field, Label, Switch } from "@headlessui/react";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
