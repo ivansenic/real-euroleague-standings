@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 export default async function Home() {
   // consts
   const data = await fetch("https://api-live.euroleague.net/v1/results", {
-    next: { revalidate: 15 * 60 },
+    next: { revalidate: 5 * 60 },
   });
   const xml = await data.text();
   const { standings, teams } = generateEuroleagueStandingsFormXml(xml);

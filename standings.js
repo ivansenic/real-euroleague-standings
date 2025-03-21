@@ -43,7 +43,7 @@ const eurocupOvertimeGameIDs = [
 // -----------------------------
 // 2) Generate Standings
 // -----------------------------
-function generateStandings(xmlData, overtimeIDs, filter) {
+function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlData, "application/xml");
   const gameNodes = xmlDoc.getElementsByTagName("game");
@@ -101,6 +101,11 @@ function generateStandings(xmlData, overtimeIDs, filter) {
 
     if (!played) {
       // If the game hasn't been played, skip it.
+      continue;
+    }
+
+    if (gameNumber > leagueGames) {
+      // If the game number is higher than the total games in the league, skip it.
       continue;
     }
 
@@ -342,5 +347,5 @@ function generateStandings(xmlData, overtimeIDs, filter) {
 }
 
 // Expose the function
-export const generateEuroleagueStandingsFormXml = (xmlData) => generateStandings(xmlData, euroleagueOvertimeGameIDs);
-export const generateEurocupStandingsFormXml = (xmlData, group) => generateStandings(xmlData, eurocupOvertimeGameIDs, {field: "group", value: group});
+export const generateEuroleagueStandingsFormXml = (xmlData) => generateStandings(xmlData, euroleagueOvertimeGameIDs, 306);
+export const generateEurocupStandingsFormXml = (xmlData, group) => generateStandings(xmlData, eurocupOvertimeGameIDs, 180, {field: "group", value: group});
