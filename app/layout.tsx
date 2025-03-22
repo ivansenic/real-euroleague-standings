@@ -40,6 +40,11 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7539731426300759"
           crossOrigin="anonymous"
         />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="apple-mobile-web-app-title" content="Euroleague" />
+        <link rel="apple-touch-icon" href="/euroleague.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
