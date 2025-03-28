@@ -1,0 +1,16 @@
+{
+  "name": "Real EL Standings",
+  "short_name": "EL Standings",
+  "description": "Real-time Euroleague basketball standings and statistics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/euroleague.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+} 
