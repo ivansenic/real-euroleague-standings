@@ -1,6 +1,7 @@
 "use client";
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { applyTieBreak } from "@/standings";
 import { teamCodeToAbbreviation } from "@/utils/utils";
 import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
@@ -40,6 +41,7 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
       ptsAgainst: 0,
       wins: 0,
       losses: 0,
+      h2h: team.h2h,
     };
 
     Object.keys(team.h2h).forEach((oppCode) => {
@@ -58,18 +60,32 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
     results.push(result);
   });
 
-  results.sort((a, b) => {
-    if (a.wins === b.wins) {
-      if (a.losses === b.losses) {
-        return b.ptsFor - b.ptsAgainst - (a.ptsFor - a.ptsAgainst);
-      }
-
-      return a.losses - b.losses;
-    }
-    return b.wins - a.wins;
+  results.sort((a, b) => b.wins/b.losses - a.wins/a.losses);
+  
+  let teamsMap = {};
+  results.forEach((team) => {
+    teamsMap[team.code] = team;
   });
 
-  return results;
+  let finalStandings = [];
+  let idx = 0;
+  while (idx < results.length) {
+    let block = [results[idx]];
+    let j = idx + 1;
+    while (j < results.length && results[j].wins === results[idx].wins && results[j].losses === results[idx].losses) {
+      block.push(results[j]);
+      j++;
+    }
+    if (block.length > 1) {
+      const tieBroken = applyTieBreak(teamsMap, block);
+      finalStandings.push(...tieBroken);
+    } else {
+      finalStandings.push(block[0]);
+    }
+    idx = j;
+  }
+
+  return finalStandings;
 };
 
 const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {

@@ -34,7 +34,7 @@ import { DOMParser } from "xmldom";
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
 const euroleagueOvertimeGameIDs = [
-  35, 75, 107, 117, 182, 190, 195
+  35, 75, 107, 117, 182, 190, 195, 272
 ];
 const eurocupOvertimeGameIDs = [
   1, 12, 41, 54, 105, 113, 115, 135
@@ -188,117 +188,7 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
   // -----------------------------
   // 5) Tie-Break function
   // -----------------------------
-  function applyTieBreak(sortedGroup) {
-    if (sortedGroup.length <= 1) {
-      return sortedGroup;
-    }
-
-    // We'll build a local compare function that tries each step in order
-    function buildMiniTable(subGroup) {
-      // subGroup: array of team objects
-      const miniTable = {};
-      subGroup.forEach((teamObj) => {
-        miniTable[teamObj.code] = {
-          code: teamObj.code,
-          name: teamObj.name,
-          h2hWins: 0,
-          h2hLosses: 0,
-          h2hPointsFor: 0,
-          h2hPointsAgainst: 0,
-        };
-      });
-
-      // Accumulate only for teams within subGroup
-      subGroup.forEach((t) => {
-        const tCode = t.code;
-        subGroup.forEach((other) => {
-          if (other.code === tCode) return;
-          const oCode = other.code;
-          // If there's an h2h record, accumulate it
-          if (teams[tCode].h2h[oCode]) {
-            miniTable[tCode].h2hWins        += teams[tCode].h2h[oCode].wins;
-            miniTable[tCode].h2hLosses      += teams[tCode].h2h[oCode].losses;
-            miniTable[tCode].h2hPointsFor   += teams[tCode].h2h[oCode].ptsFor;
-            miniTable[tCode].h2hPointsAgainst += teams[tCode].h2h[oCode].ptsAgainst;
-          }
-        });
-      });
-
-      return miniTable;
-    }
-
-    function compareTeams(a, b, subGroup) {
-      // Build mini-table from subGroup
-      const miniTable = buildMiniTable(subGroup);
-      
-      // 1) Best record in head-to-head games
-      const aPercentage = miniTable[a.code].h2hWins / (miniTable[a.code].h2hWins + miniTable[a.code].h2hLosses);
-      const bPercentage = miniTable[b.code].h2hWins / (miniTable[b.code].h2hWins + miniTable[b.code].h2hLosses);
-      if (aPercentage !== bPercentage) {
-        return bPercentage - aPercentage;
-      }
-
-      // 2) Higher cumulative score difference in h2h
-      const aH2HDiff = miniTable[a.code].h2hPointsFor - miniTable[a.code].h2hPointsAgainst;
-      const bH2HDiff = miniTable[b.code].h2hPointsFor - miniTable[b.code].h2hPointsAgainst;
-      if (aH2HDiff !== bH2HDiff) {
-        return bH2HDiff - aH2HDiff;
-      }
-
-      // 3) Overall points difference
-      const aSeasonDiff = a.ptsFor - a.ptsAgainst;
-      const bSeasonDiff = b.ptsFor - b.ptsAgainst;
-      if (aSeasonDiff !== bSeasonDiff) {
-        return bSeasonDiff - aSeasonDiff;
-      }
-
-      // 4) Total points scored
-      if (a.ptsFor !== b.ptsFor) {
-        return b.ptsFor - a.ptsFor;
-      }
-
-      // 5) Higher sumOfQuotients
-      if (a.sumOfQuotients !== b.sumOfQuotients) {
-        return b.sumOfQuotients - a.sumOfQuotients;
-      }
-
-      // Still tied
-      return 0;
-    }
-
-    let tiebreaked = [...sortedGroup];
-    tiebreaked.sort((a, b) => compareTeams(a, b, tiebreaked));
-
-    // Because multiple teams might remain fully tied through all steps,
-    // we'll do a sub-block detection and re-sort. In practice, re-sorting
-    // with the same criteria won't magically separate them if there's
-    // truly no difference. We'll just keep them in the order they appear
-    // (or you could do random / alphabetical).
-    let finalOrder = [];
-    let i = 0;
-    while (i < tiebreaked.length) {
-      let block = [tiebreaked[i]];
-      let j = i + 1;
-      while (
-        j < tiebreaked.length &&
-        compareTeams(tiebreaked[j - 1], tiebreaked[j], tiebreaked) === 0 &&
-        compareTeams(tiebreaked[j], tiebreaked[j - 1], tiebreaked) === 0
-      ) {
-        block.push(tiebreaked[j]);
-        j++;
-      }
-
-      if (block.length === 1) {
-        finalOrder.push(block[0]);
-      } else {
-        block.sort((a, b) => compareTeams(a, b, block));
-        finalOrder.push(...block);
-      }
-      i = j;
-    }
-
-    return finalOrder;
-  }
+  // Use exported function to apply tie-break rules
 
   // -----------------------------
   // 6) Sort by W (desc), then tie-break
@@ -315,7 +205,7 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
       j++;
     }
     if (block.length > 1) {
-      const tieBroken = applyTieBreak(block);
+      const tieBroken = applyTieBreak(teams, block);
       finalStandings.push(...tieBroken);
     } else {
       finalStandings.push(block[0]);
@@ -349,3 +239,128 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
 // Expose the function
 export const generateEuroleagueStandingsFormXml = (xmlData) => generateStandings(xmlData, euroleagueOvertimeGameIDs, 306);
 export const generateEurocupStandingsFormXml = (xmlData, group) => generateStandings(xmlData, eurocupOvertimeGameIDs, 180, {field: "group", value: group});
+
+// Expose the helper
+// -----------------------------
+// 5) Tie-Break function
+// -----------------------------
+export function applyTieBreak(teams, sortedGroup) {
+  if (sortedGroup.length <= 1) {
+    return sortedGroup;
+  }
+
+  // We'll build a local compare function that tries each step in order
+  function buildMiniTable(subGroup) {
+    // subGroup: array of team objects
+    const miniTable = {};
+    subGroup.forEach((teamObj) => {
+      miniTable[teamObj.code] = {
+        code: teamObj.code,
+        name: teamObj.name,
+        h2hWins: 0,
+        h2hLosses: 0,
+        h2hPointsFor: 0,
+        h2hPointsAgainst: 0,
+      };
+    });
+
+    // Accumulate only for teams within subGroup
+    subGroup.forEach((t) => {
+      const tCode = t.code;
+      subGroup.forEach((other) => {
+        if (other.code === tCode) return;
+        const oCode = other.code;
+        // If there's an h2h record, accumulate it
+        if (teams[tCode].h2h[oCode]) {
+          miniTable[tCode].h2hWins        += teams[tCode].h2h[oCode].wins;
+          miniTable[tCode].h2hLosses      += teams[tCode].h2h[oCode].losses;
+          miniTable[tCode].h2hPointsFor   += teams[tCode].h2h[oCode].ptsFor;
+          miniTable[tCode].h2hPointsAgainst += teams[tCode].h2h[oCode].ptsAgainst;
+        }
+      });
+    });
+
+    return miniTable;
+  }
+
+  function compareTeams(a, b, subGroup) {
+    // Build mini-table from subGroup
+    const miniTable = buildMiniTable(subGroup);
+    
+    // 1) Best record in head-to-head games
+    const aPercentage = miniTable[a.code].h2hWins / (miniTable[a.code].h2hWins + miniTable[a.code].h2hLosses);
+    const bPercentage = miniTable[b.code].h2hWins / (miniTable[b.code].h2hWins + miniTable[b.code].h2hLosses);
+    if (aPercentage !== bPercentage) {
+      return bPercentage - aPercentage;
+    }
+
+    // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
+    if (subGroup.length > 2) {
+      const subSubGroup = subGroup.filter(t => {
+        const tPercentage = miniTable[t.code].h2hWins / (miniTable[t.code].h2hWins + miniTable[t.code].h2hLosses);
+        return tPercentage === aPercentage;
+      });
+      return compareTeams(a, b, subSubGroup);
+    }
+
+    // 2) Higher cumulative score difference in h2h
+    const aH2HDiff = miniTable[a.code].h2hPointsFor - miniTable[a.code].h2hPointsAgainst;
+    const bH2HDiff = miniTable[b.code].h2hPointsFor - miniTable[b.code].h2hPointsAgainst;
+    if (aH2HDiff !== bH2HDiff) {
+      return bH2HDiff - aH2HDiff;
+    }
+
+    // 3) Overall points difference
+    const aSeasonDiff = a.ptsFor - a.ptsAgainst;
+    const bSeasonDiff = b.ptsFor - b.ptsAgainst;
+    if (aSeasonDiff !== bSeasonDiff) {
+      return bSeasonDiff - aSeasonDiff;
+    }
+
+    // 4) Total points scored
+    if (a.ptsFor !== b.ptsFor) {
+      return b.ptsFor - a.ptsFor;
+    }
+
+    // 5) Higher sumOfQuotients
+    if (a.sumOfQuotients !== b.sumOfQuotients) {
+      return b.sumOfQuotients - a.sumOfQuotients;
+    }
+
+    // Still tied
+    return 0;
+  }
+
+  let tiebreaked = [...sortedGroup];
+  tiebreaked.sort((a, b) => compareTeams(a, b, tiebreaked));
+
+  // Because multiple teams might remain fully tied through all steps,
+  // we'll do a sub-block detection and re-sort. In practice, re-sorting
+  // with the same criteria won't magically separate them if there's
+  // truly no difference. We'll just keep them in the order they appear
+  // (or you could do random / alphabetical).
+  let finalOrder = [];
+  let i = 0;
+  while (i < tiebreaked.length) {
+    let block = [tiebreaked[i]];
+    let j = i + 1;
+    while (
+      j < tiebreaked.length &&
+      compareTeams(tiebreaked[j - 1], tiebreaked[j], tiebreaked) === 0 &&
+      compareTeams(tiebreaked[j], tiebreaked[j - 1], tiebreaked) === 0
+    ) {
+      block.push(tiebreaked[j]);
+      j++;
+    }
+
+    if (block.length === 1) {
+      finalOrder.push(block[0]);
+    } else {
+      block.sort((a, b) => compareTeams(a, b, block));
+      finalOrder.push(...block);
+    }
+    i = j;
+  }
+
+  return finalOrder;
+}
