@@ -6,8 +6,7 @@ import { teamCodeToAbbreviation } from "@/utils/utils";
 import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useCallback, useMemo } from "react";
+import React, { Suspense, useCallback, useState } from "react";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
@@ -89,73 +88,51 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
 };
 
 const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
-  // routing to the expanded team
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [expandedTeam, setExpandedTeam] = useState();
 
   // handle expanded team
-  const expandedTeam = searchParams.get("team");
-  const setExpandedTeam = useCallback(
+  const setExpandedTeamCallback = useCallback(
     (code) => {
-      const newParams = new URLSearchParams(searchParams);
       if (code) {
-        newParams.set("team", code);
+        setExpandedTeam(code);
       } else {
-        newParams.delete("team");
+        setExpandedTeam(undefined);
       }
-      router.push(`${pathname}?${newParams}`, { scroll: false });
     },
-    [searchParams, pathname, router]
+    [setExpandedTeam]
   );
 
   // handle predication mode
-  const teamCodes = teams.map((team) => team.code);
-  const predictionMode = searchParams.get("prediction");
-  const predictionModeEnabled = predictionMode !== null;
-
-  const predictionModeTeams = useMemo(() => {
-    if (predictionModeEnabled) {
-      return predictionMode.split(",").filter((c) => teamCodes.includes(c));
-    } else {
-      return [];
-    }
-  }, [predictionMode, predictionModeEnabled, teamCodes]);
+  const [predictionModeTeams, setPredictionModeTeams] = useState();
+  const predictionModeEnabled = predictionModeTeams !== undefined;
 
   // prediction functions
   const togglePredictionMode = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams);
     if (predictionModeEnabled) {
-      newParams.delete("prediction");
+      setPredictionModeTeams(undefined);
     } else {
-      newParams.set("prediction", "");
+      setPredictionModeTeams([]);
     }
-    router.push(`${pathname}?${newParams}`, { scroll: false });
-  }, [searchParams, pathname, router, predictionModeEnabled, teamCodes]);
+  }, [predictionModeEnabled, setPredictionModeTeams]);
 
   const toggleTeamPrediction = useCallback(
     (code) => {
-      const newParams = new URLSearchParams(searchParams);
       if (predictionModeTeams.includes(code)) {
-        newParams.set(
-          "prediction",
-          predictionModeTeams.filter((c) => c !== code).join(",")
+        setPredictionModeTeams(
+          predictionModeTeams.filter((c) => c !== code)
         );
       } else {
-        newParams.set("prediction", [...predictionModeTeams, code].join(","));
+        setPredictionModeTeams([...predictionModeTeams, code]);
       }
-      router.push(`${pathname}?${newParams}`, { scroll: false });
     },
-    [searchParams, pathname, router, predictionModeTeams]
+    [predictionModeTeams, setPredictionModeTeams]
   );
 
   const enterTeamsPredictionMode = useCallback(
     (codes) => {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set("prediction", codes.join(","));
-      router.push(`${pathname}?${newParams}`, { scroll: false });
+      setPredictionModeTeams(codes);
     },
-    [searchParams, pathname, router]
+    [setPredictionModeTeams]
   );
 
   // handle small screen
@@ -174,7 +151,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
                   code={team.code}
                   showIcon={isLargeScreen}
                   enabled={predictionModeEnabled}
-                  selected={predictionModeTeams.includes(team.code)}
+                  selected={predictionModeTeams?.includes(team.code)}
                   onSelected={() => toggleTeamPrediction(team.code)}
                 />
               );
@@ -198,7 +175,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
         </div>
         {predictionModeEnabled && (
           <div className="w-full mt-4 flex">
-            {predictionModeTeams.length > 1 && (
+            {predictionModeTeams?.length > 1 && (
               <SmallTable
                 title="Tie-break mini standings"
                 details={getPredictionDetails(
@@ -377,9 +354,9 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
                         )}
                         onClick={() => {
                           if (team.code === expandedTeam) {
-                            setExpandedTeam();
+                            setExpandedTeamCallback();
                           } else {
-                            setExpandedTeam(team.code);
+                            setExpandedTeamCallback(team.code);
                           }
                         }}
                       >
