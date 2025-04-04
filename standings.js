@@ -300,7 +300,11 @@ export function applyTieBreak(teams, sortedGroup) {
         const tPercentage = miniTable[t.code].h2hWins / (miniTable[t.code].h2hWins + miniTable[t.code].h2hLosses);
         return tPercentage === aPercentage;
       });
-      return compareTeams(a, b, subSubGroup);
+
+      // go into recursion only if the new subgroup is smaller
+      if (subSubGroup.length < subGroup.length) {
+        return compareTeams(a, b, subSubGroup);
+      }
     }
 
     // 2) Higher cumulative score difference in h2h
