@@ -17,7 +17,7 @@ const Navigation = () => {
                 href={"/"}
                 className={pathname === "/" ? "text-orange-400" : ""}
               >
-                {"Euroleague"}
+                {"EuroLeague"}
               </Link>
             </li>
             <li>

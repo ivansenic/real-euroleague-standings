@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "classnames": "^2.5.1",
     "next": "15.1.5",
     "react": "^19.0.0",

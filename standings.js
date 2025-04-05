@@ -180,60 +180,7 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
     } 
   }
 
-  // -----------------------------
-  // 4) Convert teams object to array
-  // -----------------------------
-  let teamArray = Object.values(teams);
-
-  // -----------------------------
-  // 5) Tie-Break function
-  // -----------------------------
-  // Use exported function to apply tie-break rules
-
-  // -----------------------------
-  // 6) Sort by W (desc), then tie-break
-  // -----------------------------
-  teamArray.sort((a, b) => b.wins/b.losses - a.wins/a.losses);
-
-  let finalStandings = [];
-  let idx = 0;
-  while (idx < teamArray.length) {
-    let block = [teamArray[idx]];
-    let j = idx + 1;
-    while (j < teamArray.length && teamArray[j].wins === teamArray[idx].wins && teamArray[j].losses === teamArray[idx].losses) {
-      block.push(teamArray[j]);
-      j++;
-    }
-    if (block.length > 1) {
-      const tieBroken = applyTieBreak(teams, block);
-      finalStandings.push(...tieBroken);
-    } else {
-      finalStandings.push(block[0]);
-    }
-    idx = j;
-  }
-
-  // ---------------------------------
-  // 7) Build display fields (H2H, etc)
-  // ---------------------------------
-  finalStandings.forEach(team => {
-    let h2hWins = 0, h2hLosses = 0, h2hPointsFor = 0, h2hPointsAgainst = 0;
-    Object.keys(team.h2h).forEach(oppCode => {
-      const opp = finalStandings.find(t => t.code === oppCode);
-      if (opp.wins == team.wins && opp.losses == team.losses) {
-        h2hWins        += team.h2h[oppCode].wins;
-        h2hLosses      += team.h2h[oppCode].losses;
-        h2hPointsFor   += team.h2h[oppCode].ptsFor;
-        h2hPointsAgainst += team.h2h[oppCode].ptsAgainst;
-      }
-    });
-    team.h2hWins = h2hWins;
-    team.h2hLosses = h2hLosses;
-    team.h2hScoreDiff = h2hPointsFor - h2hPointsAgainst;
-    team.scoreDiff = team.ptsFor - team.ptsAgainst;
-  });
-
-  return {standings: finalStandings, teams: teamArray };
+  return  createStandings(teams);
 }
 
 // Expose the function
@@ -367,4 +314,61 @@ export function applyTieBreak(teams, sortedGroup) {
   }
 
   return finalOrder;
+}
+
+export function createStandings(teams) {
+  // -----------------------------
+  // 4) Convert teams object to array
+  // -----------------------------
+  let teamArray = Object.values(teams);
+  
+  // -----------------------------
+  // 5) Tie-Break function
+  // -----------------------------
+  // Use exported function to apply tie-break rules
+
+    // -----------------------------
+  // 6) Sort by W (desc), then tie-break
+  // -----------------------------
+  teamArray.sort((a, b) => b.wins/b.losses - a.wins/a.losses);
+
+  let finalStandings = [];
+  let idx = 0;
+  while (idx < teamArray.length) {
+    let block = [teamArray[idx]];
+    let j = idx + 1;
+    while (j < teamArray.length && teamArray[j].wins === teamArray[idx].wins && teamArray[j].losses === teamArray[idx].losses) {
+      block.push(teamArray[j]);
+      j++;
+    }
+    if (block.length > 1) {
+      const tieBroken = applyTieBreak(teams, block);
+      finalStandings.push(...tieBroken);
+    } else {
+      finalStandings.push(block[0]);
+    }
+    idx = j;
+  }
+
+  // ---------------------------------
+  // 7) Build display fields (H2H, etc)
+  // ---------------------------------
+  finalStandings.forEach(team => {
+    let h2hWins = 0, h2hLosses = 0, h2hPointsFor = 0, h2hPointsAgainst = 0;
+    Object.keys(team.h2h).forEach(oppCode => {
+      const opp = finalStandings.find(t => t.code === oppCode);
+      if (opp.wins == team.wins && opp.losses == team.losses) {
+        h2hWins        += team.h2h[oppCode].wins;
+        h2hLosses      += team.h2h[oppCode].losses;
+        h2hPointsFor   += team.h2h[oppCode].ptsFor;
+        h2hPointsAgainst += team.h2h[oppCode].ptsAgainst;
+      }
+    });
+    team.h2hWins = h2hWins;
+    team.h2hLosses = h2hLosses;
+    team.h2hScoreDiff = h2hPointsFor - h2hPointsAgainst;
+    team.scoreDiff = team.ptsFor - team.ptsAgainst;
+  });
+
+  return {standings: finalStandings, teams: teamArray};
 }

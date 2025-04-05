@@ -1,5 +1,6 @@
 "use client";
 
+import { TeamBox } from "@/components/TeamBox.jsx";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { applyTieBreak } from "@/standings";
 import { teamCodeToAbbreviation } from "@/utils/utils";
@@ -59,8 +60,8 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
     results.push(result);
   });
 
-  results.sort((a, b) => b.wins/b.losses - a.wins/a.losses);
-  
+  results.sort((a, b) => b.wins / b.losses - a.wins / a.losses);
+
   let teamsMap = {};
   results.forEach((team) => {
     teamsMap[team.code] = team;
@@ -71,7 +72,11 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
   while (idx < results.length) {
     let block = [results[idx]];
     let j = idx + 1;
-    while (j < results.length && results[j].wins === results[idx].wins && results[j].losses === results[idx].losses) {
+    while (
+      j < results.length &&
+      results[j].wins === results[idx].wins &&
+      results[j].losses === results[idx].losses
+    ) {
       block.push(results[j]);
       j++;
     }
@@ -87,7 +92,13 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
   return finalStandings;
 };
 
-const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
+const Standings = ({
+  standings,
+  teams,
+  playOffPosition,
+  playInPosition,
+  disableMiniStandings,
+}) => {
   const [expandedTeam, setExpandedTeam] = useState();
 
   // handle expanded team
@@ -118,9 +129,7 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
   const toggleTeamPrediction = useCallback(
     (code) => {
       if (predictionModeTeams.includes(code)) {
-        setPredictionModeTeams(
-          predictionModeTeams.filter((c) => c !== code)
-        );
+        setPredictionModeTeams(predictionModeTeams.filter((c) => c !== code));
       } else {
         setPredictionModeTeams([...predictionModeTeams, code]);
       }
@@ -141,59 +150,63 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
 
   return (
     <>
-      <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
-        <div className="flex flex-col-reverse lg:flex-row w-full gap-4 lg:gap-8">
-          <div className="grow flex flex-row gap-2 justify-between overflow-auto py-2 lg:py-0">
-            {standings.map((team) => {
-              return (
-                <TeamBox
-                  key={team.code}
-                  code={team.code}
-                  showIcon={isLargeScreen}
-                  enabled={predictionModeEnabled}
-                  selected={predictionModeTeams?.includes(team.code)}
-                  onSelected={() => toggleTeamPrediction(team.code)}
+      {!disableMiniStandings && (
+        <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
+          <div className="flex flex-col-reverse lg:flex-row w-full gap-4 lg:gap-8">
+            <div className="grow flex flex-row gap-2 justify-between overflow-auto py-2 lg:py-0">
+              {standings.map((team) => {
+                return (
+                  <TeamBox
+                    key={team.code}
+                    code={team.code}
+                    showIcon={isLargeScreen}
+                    enabled={predictionModeEnabled}
+                    selected={predictionModeTeams?.includes(team.code)}
+                    onSelected={() => toggleTeamPrediction(team.code)}
+                  />
+                );
+              })}
+            </div>
+            <Field className="flex items-center">
+              <Switch
+                checked={predictionModeEnabled}
+                onChange={togglePredictionMode}
+                className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 data-[checked]:bg-gray-700"
+              >
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none inline-block size-5 transform rounded-full bg-white opacity-50 shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5 group-data-[checked]:opacity-100"
                 />
-              );
-            })}
+              </Switch>
+              <Label as="span" className="ml-3 text-sm">
+                <span className="font-medium text-gray-300">
+                  Mini standings
+                </span>
+              </Label>
+            </Field>
           </div>
-          <Field className="flex items-center">
-            <Switch
-              checked={predictionModeEnabled}
-              onChange={togglePredictionMode}
-              className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 data-[checked]:bg-gray-700"
-            >
-              <span
-                aria-hidden="true"
-                className="pointer-events-none inline-block size-5 transform rounded-full bg-white opacity-50 shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5 group-data-[checked]:opacity-100"
-              />
-            </Switch>
-            <Label as="span" className="ml-3 text-sm">
-              <span className="font-medium text-gray-300">Mini standings</span>
-            </Label>
-          </Field>
+          {predictionModeEnabled && (
+            <div className="w-full mt-4 flex">
+              {predictionModeTeams?.length > 1 && (
+                <SmallTable
+                  title="Tie-break mini standings"
+                  details={getPredictionDetails(
+                    predictionModeTeams,
+                    standings,
+                    teams
+                  )}
+                />
+              )}
+              {predictionModeTeams.length <= 1 && (
+                <p className="text-sm">
+                  Select at least 2 teams to view the current tie-break mini
+                  standings.
+                </p>
+              )}
+            </div>
+          )}
         </div>
-        {predictionModeEnabled && (
-          <div className="w-full mt-4 flex">
-            {predictionModeTeams?.length > 1 && (
-              <SmallTable
-                title="Tie-break mini standings"
-                details={getPredictionDetails(
-                  predictionModeTeams,
-                  standings,
-                  teams
-                )}
-              />
-            )}
-            {predictionModeTeams.length <= 1 && (
-              <p className="text-sm">
-                Select at least 2 teams to view the current tie-break mini
-                standings.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      )}
       <table className="min-w-full table-auto divide-y divide-gray-700">
         <thead>
           <tr>
@@ -377,18 +390,20 @@ const Standings = ({ standings, teams, playOffPosition, playInPosition }) => {
                         title="Tie-break opponent"
                         details={tieBreakerDetails}
                       />
-                      <button
-                        type="button"
-                        className="mt-2 mx-3 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
-                        onClick={() =>
-                          enterTeamsPredictionMode([
-                            team.code,
-                            ...tieBreakerDetails.map((t) => t.code),
-                          ])
-                        }
-                      >
-                        View in mini standings mode
-                      </button>
+                      {!disableMiniStandings && (
+                        <button
+                          type="button"
+                          className="mt-2 mx-3 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20 disabled:opacity-50, disabled:cursor-not-allowed"
+                          onClick={() =>
+                            enterTeamsPredictionMode([
+                              team.code,
+                              ...tieBreakerDetails.map((t) => t.code),
+                            ])
+                          }
+                        >
+                          View in mini standings mode
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )}
@@ -448,35 +463,6 @@ const SmallTable = (props) => {
         })}
       </tbody>
     </table>
-  );
-};
-
-const TeamBox = (props) => {
-  const { code, showIcon, enabled, selected, onSelected } = props;
-  return (
-    <div className="flex items-center">
-      <button
-        key={code}
-        disabled={!enabled}
-        type="button"
-        className={classNames(
-          "rounded-full inline-flex px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed",
-          selected && "bg-gray-700"
-        )}
-        onClick={onSelected}
-      >
-        {showIcon && (
-          <Image
-            src={`/team-logos/${code}.webp`}
-            width={20}
-            height={20}
-            alt={teamCodeToAbbreviation(code)}
-            className="mr-1"
-          />
-        )}
-        <span>{teamCodeToAbbreviation(code)}</span>
-      </button>
-    </div>
   );
 };
 
