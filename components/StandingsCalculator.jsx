@@ -5,8 +5,14 @@ import { createStandings } from "@/standings";
 import { Suspense, useCallback, useMemo, useState } from "react";
 import Standings from "./Standings.jsx";
 import { TeamBox } from "./TeamBox.jsx";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
-const StandingsCalculator = ({ lastRoundGames, teams, playOffPosition, playInPosition }) => {
+const StandingsCalculator = ({
+  games,
+  teams,
+  playOffPosition,
+  playInPosition,
+}) => {
   // handle small screen
   const isSmallScreen = useBreakpoint("sm");
   const isLargeScreen = useBreakpoint("lg");
@@ -39,7 +45,7 @@ const StandingsCalculator = ({ lastRoundGames, teams, playOffPosition, playInPos
 
     selections.forEach((selection) => {
       const { index, selectedValue } = selection;
-      const game = lastRoundGames[index];
+      const game = games[index];
       const homeTeam = updatedTeams.find((t) => t.code === game.homeCode);
       const awayTeam = updatedTeams.find((t) => t.code === game.awayCode);
 
@@ -69,7 +75,7 @@ const StandingsCalculator = ({ lastRoundGames, teams, playOffPosition, playInPos
       <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
         <div className="divide-y divide-gray-800">
           <>
-            {lastRoundGames.map((game, index) => {
+            {games.map((game, index) => {
               const selection = selections.find((s) => s.index === index);
               return (
                 <div className="flex py-3 justify-center gap-2" key={index}>
@@ -116,10 +122,11 @@ const StandingsCalculator = ({ lastRoundGames, teams, playOffPosition, playInPos
         </div>
         <div className="flex py-3 justify-center gap-2">
           <button
-            className="text-sm font-semibold text-gray-400 hover:underline"
+            className="text-sm font-semibold text-gray-400 hover:text-white"
             onClick={resetAll}
           >
-            Reset selections
+            <XMarkIcon className="h-4 w-4 inline-block mr-1" />
+            <span>Reset selections</span>
           </button>
         </div>
       </div>

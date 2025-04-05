@@ -92,7 +92,7 @@ export default async function Home() {
           </div>
         </div>
         <StandingsCalculator
-          lastRoundGames={lastRoundGames}
+          games={lastRoundGames}
           teams={teams}
           playOffPosition={6}
           playInPosition={10}
