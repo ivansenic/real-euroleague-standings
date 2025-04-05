@@ -1,7 +1,7 @@
 import Footer from "@/components/Footer.jsx";
 import Navigation from "@/components/Navigation.jsx";
 import StandingsCalculator from "@/components/StandingsCalculator.jsx";
-import { Viewport } from "next";
+import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import { generateEuroleagueStandingsFormXml } from "../../../standings.js";
 
