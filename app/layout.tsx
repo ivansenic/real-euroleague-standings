@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: "Includes known EuroLeague 2024/25 tiebreakers in the standings.",
     images: [
       {
-        url: "https://euroleague-standings.com/open-graph.png"
+        url: "https://euroleague-standings.com/images/open-graph.png"
       }
     ]
   }
@@ -44,7 +44,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="apple-mobile-web-app-title" content="Euroleague Standings" />
-        <link rel="apple-touch-icon" href="/euroleague.png" />
+        <link rel="apple-touch-icon" href="/images/euroleague.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

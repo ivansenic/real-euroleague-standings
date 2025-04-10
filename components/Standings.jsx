@@ -315,7 +315,7 @@ const Standings = ({
                     <div className="flex gap-2 items-center align-middle">
                       <span className="relative w-6 h-6 md:w-8 md:h-8">
                         <Image
-                          src={`/team-logos/${team.code}.webp`}
+                          src={`/images/team-logos/${team.code}.webp`}
                           fill
                           alt={teamCodeToAbbreviation(team.code)}
                         />
