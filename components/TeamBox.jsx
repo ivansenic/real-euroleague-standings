@@ -18,7 +18,7 @@ export const TeamBox = (props) => {
         >
           {showIcon && (
             <Image
-              src={`/team-logos/${code}.webp`}
+              src={`/images/team-logos/${code}.webp`}
               width={20}
               height={20}
               alt={teamCodeToAbbreviation(code)}
