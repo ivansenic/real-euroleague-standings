@@ -30,38 +30,47 @@ const lastRoundGames = [
   {
     homeCode: "MUN",
     awayCode: "ULK",
+    gameNumber: 298,
   },
   {
     homeCode: "ASV",
     awayCode: "MCO",
+    gameNumber: 304,
   },
   {
     homeCode: "OLY",
     awayCode: "TEL",
+    gameNumber: 299,
   },
   {
     homeCode: "MIL",
     awayCode: "BAS",
+    gameNumber: 300,
   },
   {
     homeCode: "PAR",
     awayCode: "MAD",
+    gameNumber: 301,
   },
   {
     homeCode: "PRS",
     awayCode: "BER",
+    gameNumber: 302,
   },
   {
     homeCode: "IST",
     awayCode: "ZAL",
+    gameNumber: 303,
   },
   {
     homeCode: "PAN",
     awayCode: "RED",
+    gameNumber: 305,
   },
   {
     homeCode: "BAR",
     awayCode: "VIR",
+    gameNumber: 304,
   },
 ];
 
@@ -71,7 +80,10 @@ export default async function Home() {
     next: { revalidate: 5 * 60 },
   });
   const xml = await data.text();
-  const { teams } = generateEuroleagueStandingsFormXml(xml);
+  const { teams, games } = generateEuroleagueStandingsFormXml(xml);
+  const lastRoundPendingGames = lastRoundGames.filter(
+    (g) => !games.includes(g.gameNumber)
+  );
 
   // state
   return (
@@ -92,7 +104,7 @@ export default async function Home() {
           </div>
         </div>
         <StandingsCalculator
-          games={lastRoundGames}
+          games={lastRoundPendingGames}
           teams={teams}
           playOffPosition={6}
           playInPosition={10}

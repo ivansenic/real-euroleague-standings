@@ -43,7 +43,7 @@ const eurocupOvertimeGameIDs = [
 // -----------------------------
 // 2) Generate Standings
 // -----------------------------
-function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
+function parseData(xmlData, overtimeIDs, leagueGames, filter) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlData, "application/xml");
   const gameNodes = xmlDoc.getElementsByTagName("game");
@@ -68,6 +68,7 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
   //   }
   // }
   const teams = {};
+  const games = [];
 
   function initTeamIfNotExists(teamCode, teamName) {
     if (!teams[teamCode]) {
@@ -118,6 +119,9 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
         continue;
       }
     } 
+
+    // Add game number to the games array
+    games.push(gameNumber);
 
     // Ensure we have entries for both teams
     initTeamIfNotExists(homeTeamCode, homeTeamName);
@@ -180,12 +184,20 @@ function generateStandings(xmlData, overtimeIDs, leagueGames, filter) {
     } 
   }
 
-  return  createStandings(teams);
+  return  { teams, games };
 }
 
 // Expose the function
-export const generateEuroleagueStandingsFormXml = (xmlData) => generateStandings(xmlData, euroleagueOvertimeGameIDs, 306);
-export const generateEurocupStandingsFormXml = (xmlData, group) => generateStandings(xmlData, eurocupOvertimeGameIDs, 180, {field: "group", value: group});
+export const generateEuroleagueStandingsFormXml = (xmlData) => {
+  const {teams, games} = parseData(xmlData, euroleagueOvertimeGameIDs, 306);
+  const standings = createStandings(teams);
+  return {...standings, games};
+};
+export const generateEurocupStandingsFormXml = (xmlData, group) => {
+  const {teams, games} = parseData(xmlData, eurocupOvertimeGameIDs, 180, {field: "group", value: group});
+  const standings = createStandings(teams);
+  return {...standings, games};
+};
 
 // Expose the helper
 // -----------------------------

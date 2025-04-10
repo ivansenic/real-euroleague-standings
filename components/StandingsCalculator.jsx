@@ -2,10 +2,10 @@
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { createStandings } from "@/standings";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Suspense, useCallback, useMemo, useState } from "react";
 import Standings from "./Standings.jsx";
 import { TeamBox } from "./TeamBox.jsx";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 
 const StandingsCalculator = ({
   games,
@@ -73,62 +73,71 @@ const StandingsCalculator = ({
   return (
     <>
       <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
-        <div className="divide-y divide-gray-800">
+        {games.length === 0 && (
+          <p className="text-sm md:text-base">
+            All games have been finalized, no calculation possible anymore.
+          </p>
+        )}
+        {games.length > 0 && (
           <>
-            {games.map((game, index) => {
-              const selection = selections.find((s) => s.index === index);
-              return (
-                <div className="flex py-3 justify-center gap-2" key={index}>
-                  <TeamBox
-                    code={game.homeCode}
-                    showIcon
-                    enabled
-                    selected={selection?.selectedValue === "H"}
-                    onSelected={() =>
-                      onSelectionChange(
-                        selection?.selectedValue === "H" ? "NA" : "H",
-                        index
-                      )
-                    }
-                  />
-                  <select
-                    className="block text-center rounded-md bg-white/5 px-3 py-1.5 text-sm text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                    onChange={(e) => {
-                      const selectedValue = e.target.value;
-                      onSelectionChange(selectedValue, index);
-                    }}
-                    value={selection?.selectedValue || "NA"}
-                  >
-                    <option value="NA">Select outcome</option>
-                    <option value="H">Home Win</option>
-                    <option value="A">Away Win</option>
-                  </select>
-                  <TeamBox
-                    code={game.awayCode}
-                    showIcon
-                    enabled
-                    selected={selection?.selectedValue === "A"}
-                    onSelected={() =>
-                      onSelectionChange(
-                        selection?.selectedValue === "A" ? "NA" : "A",
-                        index
-                      )
-                    }
-                  />
-                </div>
-              );
-            })}
+            <div className="divide-y divide-gray-800">
+              <>
+                {games.map((game, index) => {
+                  const selection = selections.find((s) => s.index === index);
+                  return (
+                    <div className="flex py-3 justify-center gap-2" key={index}>
+                      <TeamBox
+                        code={game.homeCode}
+                        showIcon
+                        enabled
+                        selected={selection?.selectedValue === "H"}
+                        onSelected={() =>
+                          onSelectionChange(
+                            selection?.selectedValue === "H" ? "NA" : "H",
+                            index
+                          )
+                        }
+                      />
+                      <select
+                        className="block text-center rounded-md bg-white/5 px-3 py-1.5 text-sm text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          onSelectionChange(selectedValue, index);
+                        }}
+                        value={selection?.selectedValue || "NA"}
+                      >
+                        <option value="NA">Select outcome</option>
+                        <option value="H">Home Win</option>
+                        <option value="A">Away Win</option>
+                      </select>
+                      <TeamBox
+                        code={game.awayCode}
+                        showIcon
+                        enabled
+                        selected={selection?.selectedValue === "A"}
+                        onSelected={() =>
+                          onSelectionChange(
+                            selection?.selectedValue === "A" ? "NA" : "A",
+                            index
+                          )
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </>
+            </div>
+            <div className="flex py-3 justify-center gap-2">
+              <button
+                className="text-sm font-semibold text-gray-400 hover:text-white"
+                onClick={resetAll}
+              >
+                <XMarkIcon className="h-4 w-4 inline-block mr-1" />
+                <span>Reset selections</span>
+              </button>
+            </div>
           </>
-        </div>
-        <div className="flex py-3 justify-center gap-2">
-          <button
-            className="text-sm font-semibold text-gray-400 hover:text-white"
-            onClick={resetAll}
-          >
-            <XMarkIcon className="h-4 w-4 inline-block mr-1" />
-            <span>Reset selections</span>
-          </button>
-        </div>
+        )}
       </div>
       <Standings
         standings={updatesMemo.standings}
