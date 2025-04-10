@@ -70,7 +70,7 @@ const lastRoundGames = [
   {
     homeCode: "BAR",
     awayCode: "VIR",
-    gameNumber: 304,
+    gameNumber: 306,
   },
 ];
 
