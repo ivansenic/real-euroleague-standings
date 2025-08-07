@@ -189,7 +189,7 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
 
 // Expose the function
 export const generateEuroleagueStandingsFormXml = (xmlData) => {
-  const {teams, games} = parseData(xmlData, euroleagueOvertimeGameIDs, 306);
+  const {teams, games} = parseData(xmlData, euroleagueOvertimeGameIDs, 380);
   const standings = createStandings(teams);
   return {...standings, games};
 };

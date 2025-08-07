@@ -25,7 +25,7 @@ const Navigation = () => {
                 href={"/eurocup"}
                 className={pathname === "/eurocup" ? "text-indigo-400" : ""}
               >
-                {"Eurocup"}
+                {"EuroCup"}
               </Link>
             </li>
           </ul>
