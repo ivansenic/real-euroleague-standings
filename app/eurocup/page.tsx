@@ -12,12 +12,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Real Eurocup Standings",
-  description: "Includes known Eurocup 2025/26 tiebreakers in the standings.",
+  title: "EuroCup Standings 2025/26",
+  description: "Includes known EuroCup 2025/26 tiebreakers in the standings.",
   keywords: ["eurocup", "basketball", "standings", "table"],
   openGraph: {
-    title: "Real Eurocup Standings",
-    description: "Includes known Eurocup 2025/26 tiebreakers in the standings.",
+    title: "Real EuroCup Standings",
+    description: "Includes known EuroCup 2025/26 tiebreakers in the standings.",
     images: [
       {
         url: "https://euroleague-standings.com/images/open-graph.png",
@@ -61,7 +61,7 @@ export default async function Home() {
           </div>
           <div>
             <h1 className="text-base font-semibold text-white">
-              Real Eurocup Standings 2025/26
+              Real EuroCup Standings 2025/26
             </h1>
             {games > 0 && (
               <p className="max-w-4xl text-sm text-gray-300">

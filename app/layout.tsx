@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Real EuroLeague Standings",
+  title: "EuroLeague Standings 2025/26",
   description: "Includes known EuroLeague 2025/26 tiebreakers in the standings.",
   keywords: ["euroleague", "basketball", "standings", "table"],
   openGraph: {
