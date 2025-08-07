@@ -75,7 +75,7 @@ export default async function Home() {
             No games played yet. Check back later for standings.
           </p>
         )}
-        {gamesA > 0 && (
+        {games > 0 && (
           <>
             <div className="pt-4">
               <h1 className="font-medium">Group A</h1>
