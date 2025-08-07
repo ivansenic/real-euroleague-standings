@@ -76,7 +76,7 @@ const lastRoundGames = [
 
 export default async function Home() {
   // consts
-  const data = await fetch("https://api-live.euroleague.net/v1/results", {
+  const data = await fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2024", {
     next: { revalidate: 5 * 60 },
   });
   const xml = await data.text();
