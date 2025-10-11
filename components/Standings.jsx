@@ -313,7 +313,7 @@ const Standings = ({
                     title={team.name}
                   >
                     <div className="flex gap-2 items-center align-middle">
-                      <span className="relative w-6 h-6 md:w-8 md:h-8">
+                      <span className="relative size-8 border-2 border-white rounded-full bg-white overflow-hidden">
                         <Image
                           src={`/images/team-logos/${team.code}.webp`}
                           fill
