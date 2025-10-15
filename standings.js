@@ -293,12 +293,12 @@ export function applyTieBreak(teams, sortedGroup) {
         }
       }
     } else if (aPercentage === undefined) {
-      if (bPercentage > 0) {
-        return 1; // a has no H2H games, b has some wins, so b is better
+      if (bPercentage > 0.5) {
+        return 1; // a has no H2H games, b has positive, so b is better
       }
     } else if (bPercentage === undefined) {
-      if (aPercentage > 0) {
-        return -1; // b has no H2H games, a has some wins, so a is better
+      if (aPercentage > 0.5) {
+        return -1; // b has no H2H games, a has positive, so a is better
       }
     }
 
