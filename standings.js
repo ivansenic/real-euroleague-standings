@@ -306,7 +306,6 @@ export function applyTieBreak(teams, sortedGroup) {
     const aH2HDiff = getH2HDiff(aMiniTable);
     const bH2HDiff = getH2HDiff(bMiniTable);
     if (aH2HDiff !== bH2HDiff) {
-      console.info("decidng by H2H diff", a.name, b.name, aH2HDiff, bH2HDiff);
       return bH2HDiff - aH2HDiff;
     }
 
