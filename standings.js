@@ -34,7 +34,7 @@ import { DOMParser } from "xmldom";
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
 const euroleagueOvertimeGameIDs = [];
-const eurocupOvertimeGameIDs = [];
+const eurocupOvertimeGameIDs = [9];
 
 // -----------------------------
 // 2) Generate Standings

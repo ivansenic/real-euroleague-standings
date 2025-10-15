@@ -60,7 +60,19 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
     results.push(result);
   });
 
-  results.sort((a, b) => b.wins / b.losses - a.wins / a.losses);
+  results.sort((a, b) => {
+    const aTotal = a.wins + a.losses;
+    const aPercent = aTotal > 0 ? a.wins / aTotal : 0;
+    const bTotal = b.wins + b.losses;
+    const bPercent = bTotal > 0 ? b.wins / bTotal : 0;
+
+    // if percentages are different, favor teams with smaller number of games played
+    if (bPercent !== aPercent) {
+      return bPercent - aPercent;
+    } else {
+      return aTotal - bTotal;
+    }
+  });
 
   let teamsMap = {};
   results.forEach((team) => {
