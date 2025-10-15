@@ -262,7 +262,7 @@ export function applyTieBreak(teams, sortedGroup) {
     return miniTable;
   }
 
-  function compareTeams(a, b, subGroup) {
+  function compareTeams(a, b, subGroup, previousSubGroup) {
     // Build mini-table from subGroup
     const miniTable = buildMiniTable(subGroup);
 
@@ -274,7 +274,11 @@ export function applyTieBreak(teams, sortedGroup) {
     const bPercentage = getPercentage(bMiniTable);
 
     // both have played, rank by percentage if they differ
-    if (aPercentage && bPercentage && aPercentage !== bPercentage) {
+    if (
+      aPercentage !== undefined &&
+      bPercentage !== undefined &&
+      aPercentage !== bPercentage
+    ) {
       return bPercentage - aPercentage;
     }
 
@@ -283,12 +287,12 @@ export function applyTieBreak(teams, sortedGroup) {
       const subSubGroup = subGroup.filter((t) => {
         const tMiniCode = miniTable[t.code];
         const tPercentage = getPercentage(tMiniCode);
-        return tPercentage !== undefined && tPercentage === aPercentage;
+        return tPercentage === aPercentage;
       });
 
       // go into recursion only if the new subgroup is smaller
       if (subSubGroup.length < subGroup.length) {
-        return compareTeams(a, b, subSubGroup);
+        return compareTeams(a, b, subSubGroup, subGroup);
       }
     }
 
@@ -296,7 +300,18 @@ export function applyTieBreak(teams, sortedGroup) {
     const aH2HDiff = getH2HDiff(aMiniTable);
     const bH2HDiff = getH2HDiff(bMiniTable);
     if (aH2HDiff !== bH2HDiff) {
+      console.info("decidng by H2H diff", a.name, b.name, aH2HDiff, bH2HDiff);
       return bH2HDiff - aH2HDiff;
+    }
+
+    // 2a) If we came from a previous subgroup, and are still tied,
+    // we need to re-apply the previous subgroup to ensure correct order.
+    if (previousSubGroup) {
+      const aIndexOf = previousSubGroup.findIndex((t) => t.code === a.code);
+      const bIndexOf = previousSubGroup.findIndex((t) => t.code === b.code);
+      if (aIndexOf !== bIndexOf) {
+        return aIndexOf - bIndexOf;
+      }
     }
 
     // 3) Overall points difference
