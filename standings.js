@@ -274,25 +274,31 @@ export function applyTieBreak(teams, sortedGroup) {
     const bPercentage = getPercentage(bMiniTable);
 
     // both have played, rank by percentage if they differ
-    if (
-      aPercentage !== undefined &&
-      bPercentage !== undefined &&
-      aPercentage !== bPercentage
-    ) {
-      return bPercentage - aPercentage;
-    }
+    if (aPercentage !== undefined && bPercentage !== undefined) {
+      if (aPercentage !== bPercentage) {
+        return bPercentage - aPercentage;
+      }
 
-    // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
-    if (subGroup.length > 2) {
-      const subSubGroup = subGroup.filter((t) => {
-        const tMiniCode = miniTable[t.code];
-        const tPercentage = getPercentage(tMiniCode);
-        return tPercentage === aPercentage;
-      });
+      // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
+      if (subGroup.length > 2) {
+        const subSubGroup = subGroup.filter((t) => {
+          const tMiniCode = miniTable[t.code];
+          const tPercentage = getPercentage(tMiniCode);
+          return tPercentage === aPercentage;
+        });
 
-      // go into recursion only if the new subgroup is smaller
-      if (subSubGroup.length < subGroup.length) {
-        return compareTeams(a, b, subSubGroup, subGroup);
+        // go into recursion only if the new subgroup is smaller
+        if (subSubGroup.length < subGroup.length) {
+          return compareTeams(a, b, subSubGroup, subGroup);
+        }
+      }
+    } else if (aPercentage === undefined) {
+      if (bPercentage > 0) {
+        return 1; // a has no H2H games, b has some wins, so b is better
+      }
+    } else if (bPercentage === undefined) {
+      if (aPercentage > 0) {
+        return -1; // b has no H2H games, a has some wins, so a is better
       }
     }
 
