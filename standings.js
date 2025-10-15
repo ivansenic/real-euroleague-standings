@@ -3,7 +3,7 @@
  *
  * HOW TO RUN FROM COMMAND LINE:
  * 1. Make sure you have Node.js installed.
- * 2. Install the "xmldom" package if you don't have it: 
+ * 2. Install the "xmldom" package if you don't have it:
  *      npm install xmldom
  * 3. Place your "results.xml" file in the same directory as this script.
  * 4. (Optional) Edit the array "overtimeGameIDs" below if you have games that went to OT.
@@ -33,12 +33,8 @@ import { DOMParser } from "xmldom";
 // -----------------------------
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
-const euroleagueOvertimeGameIDs = [
-  35, 75, 107, 117, 182, 190, 195, 272, 295
-];
-const eurocupOvertimeGameIDs = [
-  1, 12, 41, 54, 105, 113, 115, 135
-];
+const euroleagueOvertimeGameIDs = [];
+const eurocupOvertimeGameIDs = [9];
 
 // -----------------------------
 // 2) Generate Standings
@@ -80,7 +76,7 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
         ptsFor: 0,
         ptsAgainst: 0,
         sumOfQuotients: 0,
-        h2h: {}
+        h2h: {},
       };
     }
   }
@@ -91,14 +87,24 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
   for (let i = 0; i < gameNodes.length; i++) {
     const game = gameNodes[i];
 
-    const homeTeamName  = game.getElementsByTagName("hometeam")[0].textContent;
-    const homeTeamCode  = game.getElementsByTagName("homecode")[0].textContent;
-    const awayTeamName  = game.getElementsByTagName("awayteam")[0].textContent;
-    const awayTeamCode  = game.getElementsByTagName("awaycode")[0].textContent;
-    const homeScore     = parseInt(game.getElementsByTagName("homescore")[0].textContent, 10);
-    const awayScore     = parseInt(game.getElementsByTagName("awayscore")[0].textContent, 10);
-    const played        = game.getElementsByTagName("played")[0].textContent === "true";
-    const gameNumber    = parseInt(game.getElementsByTagName("gamenumber")[0].textContent, 10);
+    const homeTeamName = game.getElementsByTagName("hometeam")[0].textContent;
+    const homeTeamCode = game.getElementsByTagName("homecode")[0].textContent;
+    const awayTeamName = game.getElementsByTagName("awayteam")[0].textContent;
+    const awayTeamCode = game.getElementsByTagName("awaycode")[0].textContent;
+    const homeScore = parseInt(
+      game.getElementsByTagName("homescore")[0].textContent,
+      10
+    );
+    const awayScore = parseInt(
+      game.getElementsByTagName("awayscore")[0].textContent,
+      10
+    );
+    const played =
+      game.getElementsByTagName("played")[0].textContent === "true";
+    const gameNumber = parseInt(
+      game.getElementsByTagName("gamenumber")[0].textContent,
+      10
+    );
 
     if (!played) {
       // If the game hasn't been played, skip it.
@@ -118,7 +124,7 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
       if (actualValue !== value) {
         continue;
       }
-    } 
+    }
 
     // Add game number to the games array
     games.push(gameNumber);
@@ -127,7 +133,7 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
     initTeamIfNotExists(homeTeamCode, homeTeamName);
     initTeamIfNotExists(awayTeamCode, awayTeamName);
 
-    // Determine the winner (for W/L record), ignoring OT points logic 
+    // Determine the winner (for W/L record), ignoring OT points logic
     // because the outcome doesn't change (someone won).
     if (homeScore > awayScore) {
       teams[homeTeamCode].wins += 1;
@@ -136,15 +142,25 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
       teams[awayTeamCode].wins += 1;
       teams[homeTeamCode].losses += 1;
     }
-    // If a tie is possible, handle that as well. 
+    // If a tie is possible, handle that as well.
     // (Normally basketball doesn't end in a tie.)
 
     // Head-to-head structure init
     if (!teams[homeTeamCode].h2h[awayTeamCode]) {
-      teams[homeTeamCode].h2h[awayTeamCode] = { ptsFor: 0, ptsAgainst: 0, wins: 0, losses: 0 };
+      teams[homeTeamCode].h2h[awayTeamCode] = {
+        ptsFor: 0,
+        ptsAgainst: 0,
+        wins: 0,
+        losses: 0,
+      };
     }
     if (!teams[awayTeamCode].h2h[homeTeamCode]) {
-      teams[awayTeamCode].h2h[homeTeamCode] = { ptsFor: 0, ptsAgainst: 0, wins: 0, losses: 0 };
+      teams[awayTeamCode].h2h[homeTeamCode] = {
+        ptsFor: 0,
+        ptsAgainst: 0,
+        wins: 0,
+        losses: 0,
+      };
     }
     if (homeScore > awayScore) {
       teams[homeTeamCode].h2h[awayTeamCode].wins += 1;
@@ -163,40 +179,43 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
     const isOvertimeGame = overtimeIDs.includes(gameNumber);
     if (!isOvertimeGame) {
       // Update overall points for/against
-      teams[homeTeamCode].ptsFor      += homeScore;
-      teams[homeTeamCode].ptsAgainst  += awayScore;
-      teams[awayTeamCode].ptsFor      += awayScore;
-      teams[awayTeamCode].ptsAgainst  += homeScore;
+      teams[homeTeamCode].ptsFor += homeScore;
+      teams[homeTeamCode].ptsAgainst += awayScore;
+      teams[awayTeamCode].ptsFor += awayScore;
+      teams[awayTeamCode].ptsAgainst += homeScore;
 
       // Sum of quotients for tie-break #5
       if (awayScore > 0) {
-        teams[homeTeamCode].sumOfQuotients += (homeScore / awayScore);
+        teams[homeTeamCode].sumOfQuotients += homeScore / awayScore;
       }
       if (homeScore > 0) {
-        teams[awayTeamCode].sumOfQuotients += (awayScore / homeScore);
+        teams[awayTeamCode].sumOfQuotients += awayScore / homeScore;
       }
 
       // Update head-to-head points
-      teams[homeTeamCode].h2h[awayTeamCode].ptsFor     += homeScore;
+      teams[homeTeamCode].h2h[awayTeamCode].ptsFor += homeScore;
       teams[homeTeamCode].h2h[awayTeamCode].ptsAgainst += awayScore;
-      teams[awayTeamCode].h2h[homeTeamCode].ptsFor     += awayScore;
+      teams[awayTeamCode].h2h[homeTeamCode].ptsFor += awayScore;
       teams[awayTeamCode].h2h[homeTeamCode].ptsAgainst += homeScore;
-    } 
+    }
   }
 
-  return  { teams, games };
+  return { teams, games };
 }
 
 // Expose the function
 export const generateEuroleagueStandingsFormXml = (xmlData) => {
-  const {teams, games} = parseData(xmlData, euroleagueOvertimeGameIDs, 380);
+  const { teams, games } = parseData(xmlData, euroleagueOvertimeGameIDs, 380);
   const standings = createStandings(teams);
-  return {...standings, games};
+  return { ...standings, games };
 };
 export const generateEurocupStandingsFormXml = (xmlData, group) => {
-  const {teams, games} = parseData(xmlData, eurocupOvertimeGameIDs, 180, {field: "group", value: group});
+  const { teams, games } = parseData(xmlData, eurocupOvertimeGameIDs, 180, {
+    field: "group",
+    value: group,
+  });
   const standings = createStandings(teams);
-  return {...standings, games};
+  return { ...standings, games };
 };
 
 // Expose the helper
@@ -231,10 +250,11 @@ export function applyTieBreak(teams, sortedGroup) {
         const oCode = other.code;
         // If there's an h2h record, accumulate it
         if (teams[tCode].h2h[oCode]) {
-          miniTable[tCode].h2hWins        += teams[tCode].h2h[oCode].wins;
-          miniTable[tCode].h2hLosses      += teams[tCode].h2h[oCode].losses;
-          miniTable[tCode].h2hPointsFor   += teams[tCode].h2h[oCode].ptsFor;
-          miniTable[tCode].h2hPointsAgainst += teams[tCode].h2h[oCode].ptsAgainst;
+          miniTable[tCode].h2hWins += teams[tCode].h2h[oCode].wins;
+          miniTable[tCode].h2hLosses += teams[tCode].h2h[oCode].losses;
+          miniTable[tCode].h2hPointsFor += teams[tCode].h2h[oCode].ptsFor;
+          miniTable[tCode].h2hPointsAgainst +=
+            teams[tCode].h2h[oCode].ptsAgainst;
         }
       });
     });
@@ -242,35 +262,62 @@ export function applyTieBreak(teams, sortedGroup) {
     return miniTable;
   }
 
-  function compareTeams(a, b, subGroup) {
+  function compareTeams(a, b, subGroup, previousSubGroup) {
     // Build mini-table from subGroup
     const miniTable = buildMiniTable(subGroup);
-    
+
+    const aMiniTable = miniTable[a.code];
+    const bMiniTable = miniTable[b.code];
+
     // 1) Best record in head-to-head games
-    const aPercentage = miniTable[a.code].h2hWins / (miniTable[a.code].h2hWins + miniTable[a.code].h2hLosses);
-    const bPercentage = miniTable[b.code].h2hWins / (miniTable[b.code].h2hWins + miniTable[b.code].h2hLosses);
-    if (aPercentage !== bPercentage) {
-      return bPercentage - aPercentage;
-    }
+    const aPercentage = getPercentage(aMiniTable);
+    const bPercentage = getPercentage(bMiniTable);
 
-    // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
-    if (subGroup.length > 2) {
-      const subSubGroup = subGroup.filter(t => {
-        const tPercentage = miniTable[t.code].h2hWins / (miniTable[t.code].h2hWins + miniTable[t.code].h2hLosses);
-        return tPercentage === aPercentage;
-      });
+    // both have played, rank by percentage if they differ
+    if (aPercentage !== undefined && bPercentage !== undefined) {
+      if (aPercentage !== bPercentage) {
+        return bPercentage - aPercentage;
+      }
 
-      // go into recursion only if the new subgroup is smaller
-      if (subSubGroup.length < subGroup.length) {
-        return compareTeams(a, b, subSubGroup);
+      // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
+      if (subGroup.length > 2) {
+        const subSubGroup = subGroup.filter((t) => {
+          const tMiniCode = miniTable[t.code];
+          const tPercentage = getPercentage(tMiniCode);
+          return tPercentage === aPercentage;
+        });
+
+        // go into recursion only if the new subgroup is smaller
+        if (subSubGroup.length < subGroup.length) {
+          return compareTeams(a, b, subSubGroup, subGroup);
+        }
+      }
+    } else if (aPercentage === undefined) {
+      if (bPercentage > 0.5) {
+        return 1; // a has no H2H games, b has positive, so b is better
+      }
+    } else if (bPercentage === undefined) {
+      if (aPercentage > 0.5) {
+        return -1; // b has no H2H games, a has positive, so a is better
       }
     }
 
     // 2) Higher cumulative score difference in h2h
-    const aH2HDiff = miniTable[a.code].h2hPointsFor - miniTable[a.code].h2hPointsAgainst;
-    const bH2HDiff = miniTable[b.code].h2hPointsFor - miniTable[b.code].h2hPointsAgainst;
+    const aH2HDiff = getH2HDiff(aMiniTable);
+    const bH2HDiff = getH2HDiff(bMiniTable);
     if (aH2HDiff !== bH2HDiff) {
+      console.info("decidng by H2H diff", a.name, b.name, aH2HDiff, bH2HDiff);
       return bH2HDiff - aH2HDiff;
+    }
+
+    // 2a) If we came from a previous subgroup, and are still tied,
+    // we need to re-apply the previous subgroup to ensure correct order.
+    if (previousSubGroup) {
+      const aIndexOf = previousSubGroup.findIndex((t) => t.code === a.code);
+      const bIndexOf = previousSubGroup.findIndex((t) => t.code === b.code);
+      if (aIndexOf !== bIndexOf) {
+        return aIndexOf - bIndexOf;
+      }
     }
 
     // 3) Overall points difference
@@ -328,28 +375,47 @@ export function applyTieBreak(teams, sortedGroup) {
   return finalOrder;
 }
 
+function getPercentage(miniTableEntry) {
+  if (!miniTableEntry) {
+    return undefined;
+  }
+  const totalGames = miniTableEntry.h2hWins + miniTableEntry.h2hLosses;
+  return totalGames > 0 ? miniTableEntry.h2hWins / totalGames : undefined;
+}
+
+function getH2HDiff(miniTableEntry) {
+  if (!miniTableEntry) {
+    return 0;
+  }
+  return miniTableEntry.h2hPointsFor - miniTableEntry.h2hPointsAgainst;
+}
+
 export function createStandings(teams) {
   // -----------------------------
   // 4) Convert teams object to array
   // -----------------------------
   let teamArray = Object.values(teams);
-  
+
   // -----------------------------
   // 5) Tie-Break function
   // -----------------------------
   // Use exported function to apply tie-break rules
 
-    // -----------------------------
+  // -----------------------------
   // 6) Sort by W (desc), then tie-break
   // -----------------------------
-  teamArray.sort((a, b) => b.wins/b.losses - a.wins/a.losses);
+  teamArray.sort((a, b) => b.wins / b.losses - a.wins / a.losses);
 
   let finalStandings = [];
   let idx = 0;
   while (idx < teamArray.length) {
     let block = [teamArray[idx]];
     let j = idx + 1;
-    while (j < teamArray.length && teamArray[j].wins === teamArray[idx].wins && teamArray[j].losses === teamArray[idx].losses) {
+    while (
+      j < teamArray.length &&
+      teamArray[j].wins === teamArray[idx].wins &&
+      teamArray[j].losses === teamArray[idx].losses
+    ) {
       block.push(teamArray[j]);
       j++;
     }
@@ -365,14 +431,17 @@ export function createStandings(teams) {
   // ---------------------------------
   // 7) Build display fields (H2H, etc)
   // ---------------------------------
-  finalStandings.forEach(team => {
-    let h2hWins = 0, h2hLosses = 0, h2hPointsFor = 0, h2hPointsAgainst = 0;
-    Object.keys(team.h2h).forEach(oppCode => {
-      const opp = finalStandings.find(t => t.code === oppCode);
+  finalStandings.forEach((team) => {
+    let h2hWins = 0,
+      h2hLosses = 0,
+      h2hPointsFor = 0,
+      h2hPointsAgainst = 0;
+    Object.keys(team.h2h).forEach((oppCode) => {
+      const opp = finalStandings.find((t) => t.code === oppCode);
       if (opp.wins == team.wins && opp.losses == team.losses) {
-        h2hWins        += team.h2h[oppCode].wins;
-        h2hLosses      += team.h2h[oppCode].losses;
-        h2hPointsFor   += team.h2h[oppCode].ptsFor;
+        h2hWins += team.h2h[oppCode].wins;
+        h2hLosses += team.h2h[oppCode].losses;
+        h2hPointsFor += team.h2h[oppCode].ptsFor;
         h2hPointsAgainst += team.h2h[oppCode].ptsAgainst;
       }
     });
@@ -382,5 +451,5 @@ export function createStandings(teams) {
     team.scoreDiff = team.ptsFor - team.ptsAgainst;
   });
 
-  return {standings: finalStandings, teams: teamArray};
+  return { standings: finalStandings, teams: teamArray };
 }

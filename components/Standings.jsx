@@ -60,7 +60,19 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
     results.push(result);
   });
 
-  results.sort((a, b) => b.wins / b.losses - a.wins / a.losses);
+  results.sort((a, b) => {
+    const aTotal = a.wins + a.losses;
+    const aPercent = aTotal > 0 ? a.wins / aTotal : 0;
+    const bTotal = b.wins + b.losses;
+    const bPercent = bTotal > 0 ? b.wins / bTotal : 0;
+
+    // if percentages are same, favor teams with smaller number of games played
+    if (bPercent !== aPercent) {
+      return bPercent - aPercent;
+    } else {
+      return aTotal - bTotal;
+    }
+  });
 
   let teamsMap = {};
   results.forEach((team) => {
@@ -313,7 +325,7 @@ const Standings = ({
                     title={team.name}
                   >
                     <div className="flex gap-2 items-center align-middle">
-                      <span className="relative w-6 h-6 md:w-8 md:h-8">
+                      <span className="relative size-8 border-2 border-white rounded-full bg-white overflow-hidden">
                         <Image
                           src={`/images/team-logos/${team.code}.webp`}
                           fill
