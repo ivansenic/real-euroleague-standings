@@ -371,7 +371,7 @@ export function applyTieBreak(teams, sortedGroup) {
 
 function getPercentage(miniTableEntry) {
   if (!miniTableEntry) {
-    return 0;
+    return undefined;
   }
   const totalGames = miniTableEntry.h2hWins + miniTableEntry.h2hLosses;
   return totalGames > 0 ? miniTableEntry.h2hWins / totalGames : undefined;

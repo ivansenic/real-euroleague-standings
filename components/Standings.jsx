@@ -66,7 +66,7 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
     const bTotal = b.wins + b.losses;
     const bPercent = bTotal > 0 ? b.wins / bTotal : 0;
 
-    // if percentages are different, favor teams with smaller number of games played
+    // if percentages are same, favor teams with smaller number of games played
     if (bPercent !== aPercent) {
       return bPercent - aPercent;
     } else {
