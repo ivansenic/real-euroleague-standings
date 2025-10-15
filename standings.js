@@ -26,7 +26,6 @@
  *      TEAM | W | L | OverallDiff | H2H_W | H2H_L | H2H_Diff
  */
 
-import { get } from "http";
 import { DOMParser } from "xmldom";
 
 // -----------------------------
@@ -34,8 +33,8 @@ import { DOMParser } from "xmldom";
 // -----------------------------
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
-const euroleagueOvertimeGameIDs = [35, 75, 107, 117, 182, 190, 195, 272, 295];
-const eurocupOvertimeGameIDs = [1, 12, 41, 54, 105, 113, 115, 135];
+const euroleagueOvertimeGameIDs = [];
+const eurocupOvertimeGameIDs = [];
 
 // -----------------------------
 // 2) Generate Standings
@@ -274,21 +273,9 @@ export function applyTieBreak(teams, sortedGroup) {
     const aPercentage = getPercentage(aMiniTable);
     const bPercentage = getPercentage(bMiniTable);
 
-    if (aPercentage !== undefined && bPercentage !== undefined) {
-      // both have played, rank by percentage if they differ
-      if (aPercentage !== bPercentage) {
-        return bPercentage - aPercentage;
-      }
-    } else if (aPercentage === undefined) {
-      // a has not played, rank b higher if they have at least one win
-      if (bPercentage > 0) {
-        return 1;
-      }
-    } else if (bPercentage === undefined) {
-      // b has not played, rank a higher if they have at least one win
-      if (aPercentage > 0) {
-        return -1;
-      }
+    // both have played, rank by percentage if they differ
+    if (aPercentage && bPercentage && aPercentage !== bPercentage) {
+      return bPercentage - aPercentage;
     }
 
     // however if more than 2 teams are tied, we need to check the H2H in the new subgroup
@@ -296,7 +283,7 @@ export function applyTieBreak(teams, sortedGroup) {
       const subSubGroup = subGroup.filter((t) => {
         const tMiniCode = miniTable[t.code];
         const tPercentage = getPercentage(tMiniCode);
-        return tPercentage === aPercentage;
+        return tPercentage !== undefined && tPercentage === aPercentage;
       });
 
       // go into recursion only if the new subgroup is smaller
