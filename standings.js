@@ -310,7 +310,7 @@ export function applyTieBreak(teams, sortedGroup) {
     }
 
     // 2a) If we came from a previous mini-table, and are still tied,
-    // we need to re-apply h2h diff the previous mini-table to ensure correct order.
+    // we need to re-apply the h2h diff from the previous mini-table to ensure correct order.
     if (previousMiniTable) {
       const aPrevious = previousMiniTable[a.code];
       const bPrevious = previousMiniTable[b.code];
