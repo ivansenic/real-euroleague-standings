@@ -262,7 +262,7 @@ export function applyTieBreak(teams, sortedGroup) {
     return miniTable;
   }
 
-  function compareTeams(a, b, subGroup, previousSubGroup) {
+  function compareTeams(a, b, subGroup, previousMiniTable) {
     // Build mini-table from subGroup
     const miniTable = buildMiniTable(subGroup);
 
@@ -289,7 +289,7 @@ export function applyTieBreak(teams, sortedGroup) {
 
         // go into recursion only if the new subgroup is smaller
         if (subSubGroup.length < subGroup.length) {
-          return compareTeams(a, b, subSubGroup, subGroup);
+          return compareTeams(a, b, subSubGroup, miniTable);
         }
       }
     } else if (aPercentage === undefined) {
@@ -309,13 +309,16 @@ export function applyTieBreak(teams, sortedGroup) {
       return bH2HDiff - aH2HDiff;
     }
 
-    // 2a) If we came from a previous subgroup, and are still tied,
-    // we need to re-apply the previous subgroup to ensure correct order.
-    if (previousSubGroup) {
-      const aIndexOf = previousSubGroup.findIndex((t) => t.code === a.code);
-      const bIndexOf = previousSubGroup.findIndex((t) => t.code === b.code);
-      if (aIndexOf !== bIndexOf) {
-        return aIndexOf - bIndexOf;
+    // 2a) If we came from a previous mini-table, and are still tied,
+    // we need to re-apply h2h diff the previous mini-table to ensure correct order.
+    if (previousMiniTable) {
+      const aPrevious = previousMiniTable[a.code];
+      const bPrevious = previousMiniTable[b.code];
+      const aH2hPrevious = getH2HDiff(aPrevious);
+      const bH2hPrevious = getH2HDiff(bPrevious);
+
+      if (aH2hPrevious !== bH2hPrevious) {
+        return bH2hPrevious - aH2hPrevious;
       }
     }
 
