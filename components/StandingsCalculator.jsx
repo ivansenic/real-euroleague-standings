@@ -70,22 +70,27 @@ const StandingsCalculator = ({
 
   const STORAGE_KEY = "standings-calculator-selections";
 
-  const [selections, setSelections] = useState(() => {
+  const [selections, setSelections] = useState([]);
+
+  // Restore selections from localStorage on mount
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return [];
+      if (!saved) return;
       const parsed = JSON.parse(saved);
-      return Object.entries(parsed)
+      const restored = Object.entries(parsed)
         .map(([gameNumber, selectedValue]) => {
           const index = games.findIndex((g) => g.gameNumber === Number(gameNumber));
           return index >= 0 ? { index, selectedValue } : null;
         })
         .filter(Boolean);
+      if (restored.length > 0) setSelections(restored);
     } catch {
-      return [];
+      // ignore
     }
-  });
+  }, [games]);
 
+  // Save selections to localStorage on change
   useEffect(() => {
     if (selections.length === 0) {
       localStorage.removeItem(STORAGE_KEY);
