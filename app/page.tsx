@@ -3,7 +3,7 @@ import Navigation from "@/components/Navigation.jsx";
 import Standings from "@/components/Standings.jsx";
 import { Viewport } from "next";
 import Image from "next/image.js";
-import Link from "next/link.js";
+import Link from "next/link";
 import { generateEuroleagueStandingsFormXml } from "../standings.js";
 
 export const viewport: Viewport = {
@@ -44,8 +44,7 @@ export default async function Home() {
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </p>
-        <div className="flex flex-1 justify-end">
-        </div>
+
       </div>
       <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
         <main className="min-h-screen">

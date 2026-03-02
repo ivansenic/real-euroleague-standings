@@ -402,10 +402,12 @@ export function parseScheduleGames(xmlData) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     const gameday = parseInt(
-      item.getElementsByTagName("gameday")[0]?.textContent || "0"
+      item.getElementsByTagName("gameday")[0]?.textContent || "0",
+      10
     );
     const gameNumber = parseInt(
-      item.getElementsByTagName("game")[0]?.textContent || "0"
+      item.getElementsByTagName("game")[0]?.textContent || "0",
+      10
     );
     const homeCode =
       item.getElementsByTagName("homecode")[0]?.textContent || "";
