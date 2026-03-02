@@ -392,6 +392,36 @@ function getH2HDiff(miniTableEntry) {
   return miniTableEntry.h2hPointsFor - miniTableEntry.h2hPointsAgainst;
 }
 
+export function parseScheduleGames(xmlData) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlData, "application/xml");
+  const items = xmlDoc.getElementsByTagName("item");
+
+  const games = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const gameday = parseInt(
+      item.getElementsByTagName("gameday")[0]?.textContent || "0"
+    );
+    const gameNumber = parseInt(
+      item.getElementsByTagName("game")[0]?.textContent || "0"
+    );
+    const homeCode =
+      item.getElementsByTagName("homecode")[0]?.textContent || "";
+    const awayCode =
+      item.getElementsByTagName("awaycode")[0]?.textContent || "";
+    const played =
+      item.getElementsByTagName("played")[0]?.textContent === "true";
+    const date =
+      item.getElementsByTagName("date")[0]?.textContent || "";
+
+    games.push({ homeCode, awayCode, gameNumber, gameday, played, date });
+  }
+
+  return games;
+}
+
 export function createStandings(teams) {
   // -----------------------------
   // 4) Convert teams object to array
