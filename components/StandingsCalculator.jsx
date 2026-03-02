@@ -89,8 +89,13 @@ const StandingsCalculator = ({
   const updatesMemo = useMemo(() => {
     // update all teams
     const updatedTeams = teams.map((team) => {
+      const h2hCopy = {};
+      for (const [code, record] of Object.entries(team.h2h)) {
+        h2hCopy[code] = { ...record };
+      }
       return {
         ...team,
+        h2h: h2hCopy,
       };
     });
 
