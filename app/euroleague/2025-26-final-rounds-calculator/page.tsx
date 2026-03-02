@@ -29,7 +29,6 @@ export const metadata: Metadata = {
   },
 };
 
-const LAST_ROUNDS = 8;
 
 export default async function Home() {
   const [resultsResponse, scheduleResponse] = await Promise.all([
@@ -47,15 +46,9 @@ export default async function Home() {
   const scheduleXml = await scheduleResponse.text();
   const allScheduleGames = parseScheduleGames(scheduleXml);
 
-  // Find all gamedays and take the last N
-  const allGamedays = [
-    ...new Set(allScheduleGames.map((g) => g.gameday)),
-  ].sort((a, b) => a - b);
-  const lastGamedays = allGamedays.slice(-LAST_ROUNDS);
-
-  // Filter to unplayed games in the last N gamedays, drop empty rounds
+  // Filter to unplayed games, drop rounds with no remaining games
   const remainingGames = allScheduleGames
-    .filter((g) => lastGamedays.includes(g.gameday) && !g.played)
+    .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
   return (

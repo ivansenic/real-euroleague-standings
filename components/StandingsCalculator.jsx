@@ -142,13 +142,22 @@ const StandingsCalculator = ({
     }));
   }, [games, hasGamedays]);
 
-  // Simple set of open gamedays; first N open by default
+  // Expand the round closest to the current date
   const [openRounds, setOpenRounds] = useState(() => {
-    if (!hasGamedays) return new Set();
-    const gamedaySet = [...new Set(games.map((g) => g.gameday))].sort(
-      (a, b) => a - b
-    );
-    return new Set(gamedaySet.slice(0, INITIALLY_EXPANDED_ROUNDS));
+    if (!hasGamedays || !groupedGames) return new Set();
+    const now = new Date();
+    let closestGameday = groupedGames[0]?.gameday;
+    let closestDiff = Infinity;
+    for (const group of groupedGames) {
+      const dateStr = group.entries[0]?.game?.date;
+      if (!dateStr) continue;
+      const diff = Math.abs(new Date(dateStr).getTime() - now.getTime());
+      if (diff < closestDiff) {
+        closestDiff = diff;
+        closestGameday = group.gameday;
+      }
+    }
+    return new Set([closestGameday]);
   });
 
   const toggleRound = useCallback((gameday) => {
@@ -273,7 +282,7 @@ const RoundGroup = ({
         )}
       </button>
       {isOpen && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4 pb-2">
+        <div className={`grid grid-cols-1 ${entries.length > 1 ? "xl:grid-cols-2" : ""} gap-x-4 pb-2`}>
           {renderGameRows(entries)}
         </div>
       )}
