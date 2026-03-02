@@ -18,7 +18,7 @@ export default async function Home() {
     "https://api-live.euroleague.net/v1/results?seasoncode=E2025",
     {
       next: { revalidate: 5 * 60 },
-    }
+    },
   );
   const xml = await data.text();
   const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
@@ -29,7 +29,7 @@ export default async function Home() {
   // state
   return (
     <>
-      <div className="flex items-center gap-x-6 bg-gray-900 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+      <div className="flex items-center justify-center gap-x-6 bg-gray-900 px-6 py-2.5 sm:px-3.5">
         <p className="text-sm/6 text-white">
           <Link href="/euroleague/2025-26-final-rounds-calculator">
             <strong className="font-semibold">Final Rounds Calculator</strong>
@@ -44,7 +44,6 @@ export default async function Home() {
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </p>
-
       </div>
       <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
         <main className="min-h-screen">
