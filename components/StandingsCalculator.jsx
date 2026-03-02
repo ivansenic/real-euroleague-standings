@@ -7,7 +7,7 @@ import {
   ChevronUpIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Standings from "./Standings.jsx";
 import { TeamBox } from "./TeamBox.jsx";
 
@@ -68,7 +68,36 @@ const StandingsCalculator = ({
   const isXlScreen = useBreakpoint("xl");
   const columns = isXlScreen ? 2 : 1;
 
-  const [selections, setSelections] = useState([]);
+  const STORAGE_KEY = "standings-calculator-selections";
+
+  const [selections, setSelections] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Object.entries(parsed)
+        .map(([gameNumber, selectedValue]) => {
+          const index = games.findIndex((g) => g.gameNumber === Number(gameNumber));
+          return index >= 0 ? { index, selectedValue } : null;
+        })
+        .filter(Boolean);
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    if (selections.length === 0) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    const toSave = {};
+    selections.forEach(({ index, selectedValue }) => {
+      const game = games[index];
+      if (game) toSave[game.gameNumber] = selectedValue;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  }, [selections, games]);
 
   const resetAll = useCallback(() => {
     setSelections([]);
