@@ -316,7 +316,7 @@ const RoundGroup = ({
         onClick={onToggle}
       >
         <div className="flex items-center gap-2">
-          <span className="min-w-20">Round {gameday}</span>
+          <span className="w-20 shrink-0">Round {gameday}</span>
           {minDate && (
             <span className="text-gray-500 font-normal">
               {minDate === maxDate ? minDate : `${minDate} - ${maxDate}`}
