@@ -59,6 +59,7 @@ const GameRow = ({ game, index, position, columns, selection, onSelectionChange 
 const StandingsCalculator = ({
   games,
   teams,
+  roundDates,
   playOffPosition,
   playInPosition,
 }) => {
@@ -249,6 +250,7 @@ const StandingsCalculator = ({
                     key={group.gameday}
                     gameday={group.gameday}
                     entries={group.entries}
+                    roundDateRange={roundDates?.[group.gameday]}
                     isOpen={openRounds.has(group.gameday)}
                     onToggle={() => toggleRound(group.gameday)}
                     renderGameRows={renderGameRows}
@@ -299,13 +301,13 @@ const StandingsCalculator = ({
 const RoundGroup = ({
   gameday,
   entries,
+  roundDateRange,
   isOpen,
   onToggle,
   renderGameRows,
 }) => {
-  // Get the date range from entries (already sorted by date)
-  const minDate = entries[0]?.game?.date;
-  const maxDate = entries[entries.length - 1]?.game?.date;
+  const minDate = roundDateRange?.minDate;
+  const maxDate = roundDateRange?.maxDate;
 
   return (
     <div className="border-b border-gray-800 last:border-b-0">
