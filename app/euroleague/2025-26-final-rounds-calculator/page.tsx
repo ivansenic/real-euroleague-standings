@@ -46,6 +46,20 @@ export default async function Home() {
   const scheduleXml = await scheduleResponse.text();
   const allScheduleGames = parseScheduleGames(scheduleXml);
 
+  // Compute date ranges per round from all games
+  const roundDates: Record<number, { minDate: string; maxDate: string }> = {};
+  for (const game of allScheduleGames) {
+    if (!game.date || game.gameday === undefined) continue;
+    const existing = roundDates[game.gameday];
+    const gameTime = new Date(game.date).getTime();
+    if (!existing) {
+      roundDates[game.gameday] = { minDate: game.date, maxDate: game.date };
+    } else {
+      if (gameTime < new Date(existing.minDate).getTime()) existing.minDate = game.date;
+      if (gameTime > new Date(existing.maxDate).getTime()) existing.maxDate = game.date;
+    }
+  }
+
   // Filter to unplayed games, drop rounds with no remaining games
   const remainingGames = allScheduleGames
     .filter((g) => !g.played)
@@ -71,6 +85,7 @@ export default async function Home() {
         <StandingsCalculator
           games={remainingGames}
           teams={teams}
+          roundDates={roundDates}
           playOffPosition={6}
           playInPosition={10}
         />
