@@ -175,10 +175,14 @@ const StandingsCalculator = ({
     });
 
     const sortedGamedays = [...gamedayMap.keys()].sort((a, b) => a - b);
-    return sortedGamedays.map((gameday) => ({
-      gameday,
-      entries: gamedayMap.get(gameday),
-    }));
+    return sortedGamedays.map((gameday) => {
+      const entries = gamedayMap.get(gameday).sort((a, b) => {
+        const dateA = a.game.date ? new Date(a.game.date).getTime() : 0;
+        const dateB = b.game.date ? new Date(b.game.date).getTime() : 0;
+        return dateA - dateB;
+      });
+      return { gameday, entries };
+    });
   }, [games, hasGamedays]);
 
   // Expand the round closest to the current date
@@ -299,8 +303,9 @@ const RoundGroup = ({
   onToggle,
   renderGameRows,
 }) => {
-  // Get the date from the first game entry
-  const date = entries[0]?.game?.date;
+  // Get the date range from entries (already sorted by date)
+  const minDate = entries[0]?.game?.date;
+  const maxDate = entries[entries.length - 1]?.game?.date;
 
   return (
     <div className="border-b border-gray-800 last:border-b-0">
@@ -310,8 +315,10 @@ const RoundGroup = ({
       >
         <div className="flex items-center gap-2">
           <span>Round {gameday}</span>
-          {date && (
-            <span className="text-gray-500 font-normal">{date}</span>
+          {minDate && (
+            <span className="text-gray-500 font-normal">
+              {minDate === maxDate ? minDate : `${minDate} - ${maxDate}`}
+            </span>
           )}
         </div>
         {isOpen ? (
