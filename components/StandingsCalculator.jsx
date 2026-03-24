@@ -36,9 +36,9 @@ const GameRow = ({ game, index, position, columns, selection, onSelectionChange 
         }}
         value={selection?.selectedValue || "NA"}
       >
-        <option value="NA">Select outcome</option>
-        <option value="H">Home Win</option>
-        <option value="A">Away Win</option>
+        <option value="NA" className="bg-gray-900 text-white">Select outcome</option>
+        <option value="H" className="bg-gray-900 text-white">Home Win</option>
+        <option value="A" className="bg-gray-900 text-white">Away Win</option>
       </select>
       <TeamBox
         code={game.awayCode}
