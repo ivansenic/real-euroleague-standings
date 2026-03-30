@@ -104,12 +104,81 @@ const getPredictionDetails = (teamCodes, standings, teams) => {
   return finalStandings;
 };
 
+const getRemainingGamesBetweenTeams = (teamCodes, remainingGames) => {
+  if (!remainingGames || remainingGames.length === 0) return [];
+  const codeSet = new Set(teamCodes);
+  return remainingGames.filter(
+    (g) => codeSet.has(g.homeCode) && codeSet.has(g.awayCode)
+  );
+};
+
+const formatGameDate = (dateStr) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+};
+
+const RemainingGames = ({ games, teams }) => {
+  if (!games || games.length === 0) return null;
+
+  const teamsByCode = {};
+  teams.forEach((t) => {
+    teamsByCode[t.code] = t;
+  });
+
+  return (
+    <div>
+      <table className="table-auto w-full sm:w-auto">
+        <thead>
+          <tr>
+            <th
+              scope="col"
+              colSpan="4"
+              className="px-3 py-2 text-sm font-semibold text-white text-left"
+            >
+              Remaining schedule
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {games.map((game) => {
+            const home = teamsByCode[game.homeCode];
+            const away = teamsByCode[game.awayCode];
+            return (
+              <tr key={`${game.homeCode}-${game.awayCode}-${game.gameNumber}`}>
+                <td className="px-3 py-1 text-sm text-gray-400">
+                  {formatGameDate(game.date)}
+                </td>
+                <td className="px-3 py-1 text-sm text-gray-300">
+                  <span className="sm:hidden">{teamCodeToAbbreviation(game.homeCode)}</span>
+                  <span className="hidden sm:inline">{home?.name || game.homeCode}</span>
+                </td>
+                <td className="px-3 py-1 text-sm text-gray-500 text-center">
+                  vs
+                </td>
+                <td className="px-3 py-1 text-sm text-gray-300">
+                  <span className="sm:hidden">{teamCodeToAbbreviation(game.awayCode)}</span>
+                  <span className="hidden sm:inline">{away?.name || game.awayCode}</span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 const Standings = ({
   standings,
   teams,
   playOffPosition,
   playInPosition,
   disableMiniStandings,
+  remainingGames,
 }) => {
   const [expandedTeam, setExpandedTeam] = useState();
 
@@ -198,16 +267,25 @@ const Standings = ({
             </Field>
           </div>
           {predictionModeEnabled && (
-            <div className="w-full mt-4 flex">
+            <div className="w-full mt-4">
               {predictionModeTeams?.length > 1 && (
-                <SmallTable
-                  title="Tie-break mini standings"
-                  details={getPredictionDetails(
-                    predictionModeTeams,
-                    standings,
-                    teams
-                  )}
-                />
+                <div className="flex flex-col lg:flex-row lg:gap-8">
+                  <SmallTable
+                    title="Tie-break mini standings"
+                    details={getPredictionDetails(
+                      predictionModeTeams,
+                      standings,
+                      teams
+                    )}
+                  />
+                  <RemainingGames
+                    games={getRemainingGamesBetweenTeams(
+                      predictionModeTeams,
+                      remainingGames
+                    )}
+                    teams={teams}
+                  />
+                </div>
               )}
               {predictionModeTeams.length <= 1 && (
                 <p className="text-sm">
@@ -394,10 +472,19 @@ const Standings = ({
                   <tr className="bg-white/5" key={`${team.code}-details`}>
                     <td className="hidden sm:table-cell"></td>
                     <td colSpan="9" className="px-2 py-4 text-sm w-max-content">
-                      <SmallTable
-                        title="Tie-break opponent"
-                        details={tieBreakerDetails}
-                      />
+                      <div className="flex flex-col lg:flex-row lg:gap-8">
+                        <SmallTable
+                          title="Tie-break opponent"
+                          details={tieBreakerDetails}
+                        />
+                        <RemainingGames
+                          games={getRemainingGamesBetweenTeams(
+                            [team.code, ...tieBreakerDetails.map((t) => t.code)],
+                            remainingGames
+                          )}
+                          teams={teams}
+                        />
+                      </div>
                       {!disableMiniStandings && (
                         <button
                           type="button"

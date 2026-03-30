@@ -3,7 +3,10 @@ import Navigation from "@/components/Navigation.jsx";
 import Standings from "@/components/Standings.jsx";
 import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
-import { generateEurocupStandingsFormXml } from "../../standings.js";
+import {
+  generateEurocupStandingsFormXml,
+  parseScheduleGames,
+} from "../../standings.js";
 
 export const viewport: Viewport = {
   themeColor: "black",
@@ -28,17 +31,34 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   // consts
-  const data = await fetch(
-    "https://api-live.euroleague.net/v1/results?seasoncode=U2025",
-    {
+  const [resultsResponse, scheduleResponse] = await Promise.all([
+    fetch("https://api-live.euroleague.net/v1/results?seasoncode=U2025", {
       next: { revalidate: 5 * 60 },
-    }
-  );
-  const xml = await data.text();
+    }),
+    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=U2025", {
+      next: { revalidate: 5 * 60 },
+    }),
+  ]);
+  const xml = await resultsResponse.text();
   const { standings: standingsA, teams: teamsA } =
     generateEurocupStandingsFormXml(xml, "A");
   const { standings: standingsB, teams: teamsB } =
     generateEurocupStandingsFormXml(xml, "B");
+
+  const scheduleXml = await scheduleResponse.text();
+  const allRemainingGames = parseScheduleGames(scheduleXml)
+    .filter((g) => !g.played)
+    .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
+
+  // Split remaining games by group based on team codes in each group
+  const groupACodes = new Set(teamsA.map((t) => t.code));
+  const groupBCodes = new Set(teamsB.map((t) => t.code));
+  const remainingGamesA = allRemainingGames.filter(
+    (g) => groupACodes.has(g.homeCode) || groupACodes.has(g.awayCode)
+  );
+  const remainingGamesB = allRemainingGames.filter(
+    (g) => groupBCodes.has(g.homeCode) || groupBCodes.has(g.awayCode)
+  );
 
   const gamesA = standingsA
     .map((team) => team.wins + team.losses)
@@ -84,6 +104,7 @@ export default async function Home() {
                 teams={teamsA}
                 playOffPosition={2}
                 playInPosition={6}
+                remainingGames={remainingGamesA}
               />
             </div>
             <div className="pt-4">
@@ -93,6 +114,7 @@ export default async function Home() {
                 teams={teamsB}
                 playOffPosition={2}
                 playInPosition={6}
+                remainingGames={remainingGamesB}
               />
             </div>
           </>
