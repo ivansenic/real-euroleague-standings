@@ -6,8 +6,8 @@ import { applyTieBreak } from "@/standings";
 import { teamCodeToAbbreviation } from "@/utils/utils";
 import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
-import Image from "next/image";
 import React, { Suspense, useCallback, useState } from "react";
+import { TeamLogo } from "@/components/TeamLogo.jsx";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
@@ -325,12 +325,8 @@ const Standings = ({
                     title={team.name}
                   >
                     <div className="flex gap-2 items-center align-middle">
-                      <span className="relative size-8 border-2 border-white rounded-full bg-white overflow-hidden">
-                        <Image
-                          src={`/images/team-logos/${team.code}.webp`}
-                          fill
-                          alt={teamCodeToAbbreviation(team.code)}
-                        />
+                      <span className="inline-flex items-center justify-center size-8 border-2 border-white rounded-full bg-white overflow-hidden">
+                        <TeamLogo code={team.code} size={28} className="shrink-0" />
                       </span>
                       <span className="block sm:hidden">
                         {teamCodeToAbbreviation(team.code)}
