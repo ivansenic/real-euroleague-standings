@@ -226,7 +226,7 @@ const Standings = ({
       {!disableMiniStandings && (
         <div className="overflow-hidden rounded-lg border border-gray-700 px-4 py-5 sm:p-6 my-8">
           <div className="flex flex-col-reverse lg:flex-row w-full gap-4 lg:gap-8">
-            <div className="grow flex flex-row gap-2 justify-between overflow-auto py-2 lg:py-0">
+            <div className="grow flex flex-row gap-2 justify-between overflow-auto scrollbar-thin py-2 lg:py-0">
               {standings.map((team) => {
                 return (
                   <TeamBox
