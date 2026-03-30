@@ -54,10 +54,10 @@ export default async function Home() {
   const groupACodes = new Set(teamsA.map((t) => t.code));
   const groupBCodes = new Set(teamsB.map((t) => t.code));
   const remainingGamesA = allRemainingGames.filter(
-    (g) => groupACodes.has(g.homeCode) || groupACodes.has(g.awayCode)
+    (g) => groupACodes.has(g.homeCode) && groupACodes.has(g.awayCode)
   );
   const remainingGamesB = allRemainingGames.filter(
-    (g) => groupBCodes.has(g.homeCode) || groupBCodes.has(g.awayCode)
+    (g) => groupBCodes.has(g.homeCode) && groupBCodes.has(g.awayCode)
   );
 
   const gamesA = standingsA

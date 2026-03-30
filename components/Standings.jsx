@@ -132,17 +132,9 @@ const RemainingGames = ({ games, teams }) => {
   return (
     <div>
       <table className="table-auto w-full sm:w-auto">
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              colSpan="4"
-              className="px-3 py-2 text-sm font-semibold text-white text-left"
-            >
-              Remaining schedule
-            </th>
-          </tr>
-        </thead>
+        <caption className="px-3 py-2 text-sm font-semibold text-white text-left">
+          Remaining schedule
+        </caption>
         <tbody>
           {games.map((game) => {
             const home = teamsByCode[game.homeCode];
