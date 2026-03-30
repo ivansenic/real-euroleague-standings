@@ -4,7 +4,10 @@ import Standings from "@/components/Standings.jsx";
 import { Viewport } from "next";
 import Image from "next/image.js";
 import Link from "next/link";
-import { generateEuroleagueStandingsFormXml } from "../standings.js";
+import {
+  generateEuroleagueStandingsFormXml,
+  parseScheduleGames,
+} from "../standings.js";
 
 export const viewport: Viewport = {
   themeColor: "black",
@@ -14,17 +17,24 @@ export const viewport: Viewport = {
 
 export default async function Home() {
   // consts
-  const data = await fetch(
-    "https://api-live.euroleague.net/v1/results?seasoncode=E2025",
-    {
+  const [resultsResponse, scheduleResponse] = await Promise.all([
+    fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2025", {
       next: { revalidate: 5 * 60 },
-    },
-  );
-  const xml = await data.text();
+    }),
+    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2025", {
+      next: { revalidate: 5 * 60 },
+    }),
+  ]);
+  const xml = await resultsResponse.text();
   const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
   const games = standings
     .map((team) => team.wins + team.losses)
     .reduce((a, b) => Math.max(a, b), 0);
+
+  const scheduleXml = await scheduleResponse.text();
+  const remainingGames = parseScheduleGames(scheduleXml)
+    .filter((g) => !g.played)
+    .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
   // state
   return (
@@ -74,6 +84,7 @@ export default async function Home() {
               teams={teams}
               playOffPosition={6}
               playInPosition={10}
+              remainingGames={remainingGames}
             />
           )}
         </main>
