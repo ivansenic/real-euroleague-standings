@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "calculate": "node standings_print.js"
+    "calculate": "node standings_print.js",
+    "generate-sprite": "node scripts/generate-sprite.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

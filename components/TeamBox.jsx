@@ -1,6 +1,6 @@
 import { teamCodeToAbbreviation } from "@/utils/utils";
 import classNames from "classnames";
-import Image from "next/image";
+import { TeamLogo } from "@/components/TeamLogo.jsx";
 
 export const TeamBox = (props) => {
     const { code, name, showIcon, enabled, selected, onSelected, className } = props;
@@ -17,13 +17,7 @@ export const TeamBox = (props) => {
           onClick={onSelected}
         >
           {showIcon && (
-            <Image
-              src={`/images/team-logos/${code}.webp`}
-              width={20}
-              height={20}
-              alt={teamCodeToAbbreviation(code)}
-              className="mr-1"
-            />
+            <TeamLogo code={code} size={20} className="mr-1" />
           )}
           <span>{name || teamCodeToAbbreviation(code)}</span>
         </button>
