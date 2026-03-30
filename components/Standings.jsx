@@ -159,7 +159,7 @@ const RemainingGames = ({ games, teams }) => {
                 <td className="px-3 py-1 text-sm text-gray-500 text-center">
                   vs
                 </td>
-                <td className="px-3 py-1 text-sm text-gray-300">
+                <td className="px-3 py-1 text-sm text-gray-300 text-right sm:text-left">
                   <span className="sm:hidden">{teamCodeToAbbreviation(game.awayCode)}</span>
                   <span className="hidden sm:inline">{away?.name || game.awayCode}</span>
                 </td>
