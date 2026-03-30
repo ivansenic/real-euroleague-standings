@@ -39,6 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# individual team logos (source of truth is assets/team-logos/)
-/public/images/team-logos/
