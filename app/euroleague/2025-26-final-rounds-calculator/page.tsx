@@ -66,31 +66,49 @@ export default async function Home() {
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
   return (
-    <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
-      <main>
-        <Navigation />
-        <div className="w-full flex gap-2 items-center mb-4">
-          <div className="relative w-12 h-12">
-            <Image src="/images/euroleague.png" alt="Euroleague" fill />
+    <>
+      <div className="flex items-center justify-center bg-gray-900 px-4 py-2.5 sm:px-20">
+        <a
+          href="http://www.linkedin.com/in/nikolina-lutovac"
+          target="_blank"
+          rel="noopener"
+          className="block w-full max-w-[728px]"
+        >
+          <Image
+            src="/images/external/nikolina-lutovac.png"
+            alt="Nikolina Lutovac - Mental Performance Coach"
+            width={728}
+            height={90}
+            className="w-full h-auto"
+          />
+        </a>
+      </div>
+      <div className="overflow-auto min-h-screen p-4 pb-20 gap-16 sm:px-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+        <main>
+          <Navigation />
+          <div className="w-full flex gap-2 items-center mb-4">
+            <div className="relative w-12 h-12">
+              <Image src="/images/euroleague.png" alt="Euroleague" fill />
+            </div>
+            <div>
+              <h1 className="text-base font-semibold text-white">
+                EuroLeague 2025/26 Final Rounds Calculator
+              </h1>
+              <p className="max-w-4xl text-sm text-gray-300">
+                Calculator for the final standings with tiebreakers.
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base font-semibold text-white">
-              EuroLeague 2025/26 Final Rounds Calculator
-            </h1>
-            <p className="max-w-4xl text-sm text-gray-300">
-              Calculator for the final standings with tiebreakers.
-            </p>
-          </div>
-        </div>
-        <StandingsCalculator
+          <StandingsCalculator
           games={remainingGames}
           teams={teams}
           roundDates={roundDates}
           playOffPosition={6}
           playInPosition={10}
         />
-      </main>
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
