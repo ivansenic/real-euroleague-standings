@@ -44,7 +44,10 @@ export default async function Home() {
   const { teams } = generateEuroleagueStandingsFormXml(resultsXml);
 
   const scheduleXml = await scheduleResponse.text();
-  const allScheduleGames = parseScheduleGames(scheduleXml);
+  const REGULAR_SEASON_ROUNDS = 38;
+  const allScheduleGames = parseScheduleGames(scheduleXml).filter(
+    (g) => g.gameday <= REGULAR_SEASON_ROUNDS
+  );
 
   // Compute date ranges per round from all games
   const roundDates: Record<number, { minDate: string; maxDate: string }> = {};
