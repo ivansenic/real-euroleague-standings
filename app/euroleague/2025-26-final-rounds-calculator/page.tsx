@@ -46,7 +46,7 @@ export default async function Home() {
   const scheduleXml = await scheduleResponse.text();
   const REGULAR_SEASON_ROUNDS = 38;
   const allScheduleGames = parseScheduleGames(scheduleXml).filter(
-    (g) => g.gameday <= REGULAR_SEASON_ROUNDS
+    (g) => g.gameday >= 1 && g.gameday <= REGULAR_SEASON_ROUNDS
   );
 
   // Compute date ranges per round from all games
