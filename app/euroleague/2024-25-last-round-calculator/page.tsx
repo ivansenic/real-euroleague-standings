@@ -80,7 +80,7 @@ export default async function Home() {
     next: { revalidate: 5 * 60 },
   });
   const xml = await data.text();
-  const { teams, games } = generateEuroleagueStandingsFormXml(xml);
+  const { teams, games } = generateEuroleagueStandingsFormXml(xml, "E2024");
   const lastRoundPendingGames = lastRoundGames.filter(
     (g) => !games.includes(g.gameNumber)
   );

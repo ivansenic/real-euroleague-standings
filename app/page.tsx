@@ -17,10 +17,10 @@ export const viewport: Viewport = {
 export default async function Home() {
   // consts
   const [resultsResponse, scheduleResponse] = await Promise.all([
-    fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2025", {
+    fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
-    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2025", {
+    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
   ]);
@@ -46,7 +46,7 @@ export default async function Home() {
           </div>
           <div>
             <h1 className="text-base font-semibold text-white">
-              Real EuroLeague Standings 2025/26
+              Real EuroLeague Standings 2026/27
             </h1>
             {games > 0 && (
               <p className="max-w-4xl text-sm text-gray-300">

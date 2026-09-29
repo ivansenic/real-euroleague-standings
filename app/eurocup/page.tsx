@@ -15,12 +15,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "EuroCup Standings 2025/26",
-  description: "Includes known EuroCup 2025/26 tiebreakers in the standings.",
+  title: "EuroCup Standings 2026/27",
+  description: "Includes known EuroCup 2026/27 tiebreakers in the standings.",
   keywords: ["eurocup", "basketball", "standings", "table"],
   openGraph: {
     title: "Real EuroCup Standings",
-    description: "Includes known EuroCup 2025/26 tiebreakers in the standings.",
+    description: "Includes known EuroCup 2026/27 tiebreakers in the standings.",
     images: [
       {
         url: "https://euroleague-standings.com/images/open-graph.png",
@@ -29,46 +29,39 @@ export const metadata: Metadata = {
   },
 };
 
+// 2026/27: four groups of eight, top four of each group advance to playoffs
+const GROUPS = ["A", "B", "C", "D"];
+
 export default async function Home() {
   // consts
   const [resultsResponse, scheduleResponse] = await Promise.all([
-    fetch("https://api-live.euroleague.net/v1/results?seasoncode=U2025", {
+    fetch("https://api-live.euroleague.net/v1/results?seasoncode=U2026", {
       next: { revalidate: 5 * 60 },
     }),
-    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=U2025", {
+    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=U2026", {
       next: { revalidate: 5 * 60 },
     }),
   ]);
   const xml = await resultsResponse.text();
-  const { standings: standingsA, teams: teamsA } =
-    generateEurocupStandingsFormXml(xml, "A");
-  const { standings: standingsB, teams: teamsB } =
-    generateEurocupStandingsFormXml(xml, "B");
-
   const scheduleXml = await scheduleResponse.text();
   const allRemainingGames = parseScheduleGames(scheduleXml)
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
-  // Split remaining games by group based on team codes in each group
-  const groupACodes = new Set(teamsA.map((t) => t.code));
-  const groupBCodes = new Set(teamsB.map((t) => t.code));
-  const remainingGamesA = allRemainingGames.filter(
-    (g) => groupACodes.has(g.homeCode) && groupACodes.has(g.awayCode)
-  );
-  const remainingGamesB = allRemainingGames.filter(
-    (g) => groupBCodes.has(g.homeCode) && groupBCodes.has(g.awayCode)
-  );
+  const groups = GROUPS.map((name) => {
+    const { standings, teams } = generateEurocupStandingsFormXml(xml, name);
+    // Split remaining games by group based on team codes in each group
+    const codes = new Set(teams.map((t) => t.code));
+    const remainingGames = allRemainingGames.filter(
+      (g) => codes.has(g.homeCode) && codes.has(g.awayCode)
+    );
+    const games = standings
+      .map((team) => team.wins + team.losses)
+      .reduce((a, b) => Math.max(a, b), 0);
+    return { name, standings, teams, remainingGames, games };
+  });
 
-  const gamesA = standingsA
-    .map((team) => team.wins + team.losses)
-    .reduce((a, b) => Math.max(a, b), 0);
-
-  const gamesB = standingsB
-    .map((team) => team.wins + team.losses)
-    .reduce((a, b) => Math.max(a, b), 0);
-
-  const games = Math.max(gamesA, gamesB);
+  const games = Math.max(...groups.map((g) => g.games));
 
   // state
   return (
@@ -81,7 +74,7 @@ export default async function Home() {
           </div>
           <div>
             <h1 className="text-base font-semibold text-white">
-              Real EuroCup Standings 2025/26
+              Real EuroCup Standings 2026/27
             </h1>
             {games > 0 && (
               <p className="max-w-4xl text-sm text-gray-300">
@@ -97,26 +90,17 @@ export default async function Home() {
         )}
         {games > 0 && (
           <>
-            <div className="pt-4">
-              <h1 className="font-medium">Group A</h1>
-              <Standings
-                standings={standingsA}
-                teams={teamsA}
-                playOffPosition={2}
-                playInPosition={6}
-                remainingGames={remainingGamesA}
-              />
-            </div>
-            <div className="pt-4">
-              <h1 className="font-medium">Group B</h1>
-              <Standings
-                standings={standingsB}
-                teams={teamsB}
-                playOffPosition={2}
-                playInPosition={6}
-                remainingGames={remainingGamesB}
-              />
-            </div>
+            {groups.map((group) => (
+              <div key={group.name} className="pt-4">
+                <h1 className="font-medium">Group {group.name}</h1>
+                <Standings
+                  standings={group.standings}
+                  teams={group.teams}
+                  playOffPosition={4}
+                  remainingGames={group.remainingGames}
+                />
+              </div>
+            ))}
           </>
         )}
       </main>
