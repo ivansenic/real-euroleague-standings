@@ -6,17 +6,16 @@ import { TeamLogo } from "@/components/TeamLogo.jsx";
 import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
 import {
   COMPETITIONS,
-  FEED_REVALIDATE,
   resultsUrl,
   scheduleUrl,
   SEASON_LABEL,
   SITE_URL,
 } from "@/lib/season.js";
 import {
+  fetchFeed,
   findCompetition,
   getTeamPageData,
   ordinal,
-  orEmptyXml,
 } from "@/lib/team-page.js";
 import { slugToCode, TEAMS, teamDisplayName } from "@/lib/teams.js";
 import { parseScheduleGames } from "@/standings.js";
@@ -39,17 +38,6 @@ type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams() {
   return Object.values(TEAMS).map(({ slug }) => ({ slug }));
 }
-
-const fetchFeed = async (url: string) => {
-  try {
-    const response = await fetch(url, {
-      next: { revalidate: FEED_REVALIDATE },
-    });
-    return orEmptyXml(response.ok ? await response.text() : "");
-  } catch {
-    return orEmptyXml("");
-  }
-};
 
 // cached per request, shared by generateMetadata and the page
 const loadTeam = cache(async (slug: string) => {

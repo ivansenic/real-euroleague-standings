@@ -10,19 +10,24 @@ import { isSameDay } from "@/lib/team-page.js";
 
 const ResultMiddle = ({ game, accentBadgeClass }) => (
   <>
-    <span className="flex items-center gap-1">
-      <Score
-        score={game.homeScore}
-        won={game.homeScore > game.awayScore}
-        accentBadgeClass={accentBadgeClass}
-      />
-      <span className="text-gray-500">-</span>
-      <Score
-        score={game.awayScore}
-        won={game.awayScore > game.homeScore}
-        accentBadgeClass={accentBadgeClass}
-      />
-    </span>
+    {game.homeScore === undefined ? (
+      // results feed can lag behind the schedule
+      <span className="text-gray-400">Final</span>
+    ) : (
+      <span className="flex items-center gap-1">
+        <Score
+          score={game.homeScore}
+          won={game.homeScore > game.awayScore}
+          accentBadgeClass={accentBadgeClass}
+        />
+        <span className="text-gray-500">-</span>
+        <Score
+          score={game.awayScore}
+          won={game.awayScore > game.homeScore}
+          accentBadgeClass={accentBadgeClass}
+        />
+      </span>
+    )}
     <span className="text-xs text-gray-500">{formatDayLabel(game.date)}</span>
   </>
 );
@@ -45,7 +50,11 @@ const FixtureMiddle = ({ game, now, accentClass }) => {
   return (
     <>
       <span className="text-gray-400 tabular-nums">{label}</span>
-      <Odds odds={game.odds} live={status === "live"} accentClass={accentClass} />
+      <Odds
+        odds={game.odds}
+        live={status === "live"}
+        accentClass={accentClass}
+      />
     </>
   );
 };
