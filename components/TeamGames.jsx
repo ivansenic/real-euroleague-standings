@@ -61,7 +61,7 @@ const FixtureMiddle = ({ game, now, accentClass }) => {
 
 const Column = ({ title, empty, children }) => (
   <section className="rounded-lg border border-white/10 p-3">
-    <h2 className="mb-2 font-semibold text-white">{title}</h2>
+    <h2 className="mb-2 text-center font-semibold text-white">{title}</h2>
     {children.length === 0 ? (
       <p className="py-4 text-center text-gray-400">{empty}</p>
     ) : (

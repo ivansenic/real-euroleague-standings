@@ -6,9 +6,9 @@ const formatDiff = (n) => (n > 0 ? `+${n}` : `${n}`);
 
 const List = ({ title, entries }) => (
   <section className="rounded-lg border border-white/10 p-3">
-    <h3 className="mb-2 font-semibold text-white">{title}</h3>
+    <h2 className="mb-2 text-center font-semibold text-white">{title}</h2>
     {entries.length === 0 ? (
-      <p className="py-2 text-center text-gray-400">None yet</p>
+      <p className="py-4 text-center text-gray-400">None yet</p>
     ) : (
       <ul>
         {entries.map((entry) => (
@@ -36,18 +36,9 @@ const List = ({ title, entries }) => (
 );
 
 const KnownTiebreakers = ({ positive, negative }) => (
-  <div className="mb-6 text-sm">
-    <h2 className="mb-2 font-semibold text-white">Known tiebreakers</h2>
-    {positive.length === 0 && negative.length === 0 ? (
-      <p className="rounded-lg border border-white/10 p-4 text-center text-gray-400">
-        No decided head-to-heads yet
-      </p>
-    ) : (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <List title="Won" entries={positive} />
-        <List title="Lost" entries={negative} />
-      </div>
-    )}
+  <div className="mb-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+    <List title="Tiebreakers won" entries={positive} />
+    <List title="Tiebreakers lost" entries={negative} />
   </div>
 );
 

@@ -126,7 +126,7 @@ export default async function TeamPage({ params }: Props) {
             <p className="text-sm text-gray-300">
               <Link
                 href={competition.standingsPath}
-                className={`hover:underline ${competition.accentClass}`}
+                className="hover:underline"
               >
                 {competition.name} {SEASON_LABEL}
               </Link>
