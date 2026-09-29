@@ -1,11 +1,15 @@
 "use client";
 
 import { TeamLogo } from "@/components/TeamLogo.jsx";
-import { formatDayLabel, getGameStatus } from "@/lib/schedule.js";
+import {
+  formatDayLabel,
+  getGameStatus,
+  swipeDirection,
+} from "@/lib/schedule.js";
 import { teamCodeToAbbreviation } from "@/utils/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // null during server render and hydration, then the current time,
 // refreshed every minute so cached pages switch games to live on time
@@ -139,7 +143,38 @@ const ScheduleWidget = ({
   accentBadgeClass = "bg-orange-400/15 text-orange-400",
 }) => {
   const [index, setIndex] = useState(Math.max(defaultIndex, 0));
+  // last navigation direction, drives the slide-in animation
+  const [direction, setDirection] = useState(0);
+  const touchStart = useRef(null);
   const now = useNow();
+
+  const go = (step) => {
+    const next = index + step;
+    if (step === 0 || next < 0 || next >= days.length) {
+      return;
+    }
+    setDirection(step);
+    setIndex(next);
+  };
+
+  const onTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const onTouchEnd = (event) => {
+    if (!touchStart.current) {
+      return;
+    }
+    const touch = event.changedTouches[0];
+    go(
+      swipeDirection(
+        touch.clientX - touchStart.current.x,
+        touch.clientY - touchStart.current.y
+      )
+    );
+    touchStart.current = null;
+  };
 
   if (days.length === 0) {
     return null;
@@ -150,13 +185,17 @@ const ScheduleWidget = ({
   const hasNext = index < days.length - 1;
 
   return (
-    <div className="mb-6 w-full rounded-lg border border-white/10 p-3 text-sm">
+    <div
+      className="mb-6 w-full touch-pan-y overflow-hidden rounded-lg border border-white/10 p-3 text-sm"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
           aria-label="Previous game day"
           disabled={!hasPrev}
-          onClick={() => setIndex(index - 1)}
+          onClick={() => go(-1)}
           className="rounded p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
         >
           <ChevronLeftIcon className="h-5 w-5" />
@@ -168,13 +207,19 @@ const ScheduleWidget = ({
           type="button"
           aria-label="Next game day"
           disabled={!hasNext}
-          onClick={() => setIndex(index + 1)}
+          onClick={() => go(1)}
           className="rounded p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
         >
           <ChevronRightIcon className="h-5 w-5" />
         </button>
       </div>
-      <ul className="grid grid-cols-1 gap-x-8 lg:grid-cols-2">
+      <ul
+        key={day.date}
+        className={classNames("grid grid-cols-1 gap-x-8 lg:grid-cols-2", {
+          "motion-safe:animate-slide-in-right": direction === 1,
+          "motion-safe:animate-slide-in-left": direction === -1,
+        })}
+      >
         {day.games.map((game) => (
           <GameRow
             key={game.gameNumber}
