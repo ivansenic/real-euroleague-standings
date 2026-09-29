@@ -41,7 +41,7 @@ export default async function Home() {
   ]);
 
   const resultsXml = await resultsResponse.text();
-  const { teams } = generateEuroleagueStandingsFormXml(resultsXml);
+  const { teams } = generateEuroleagueStandingsFormXml(resultsXml, "E2025");
 
   const scheduleXml = await scheduleResponse.text();
   const REGULAR_SEASON_ROUNDS = 38;

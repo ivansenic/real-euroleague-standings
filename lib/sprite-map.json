@@ -46,6 +46,21 @@
     "VNC",
     "WOL",
     "WRO",
-    "ZAL"
+    "ZAL",
+    "BCR",
+    "BGS",
+    "BLK",
+    "BOS",
+    "BUR",
+    "FRA",
+    "LEM",
+    "MRO",
+    "NAP",
+    "PAO",
+    "RIG",
+    "RTK",
+    "SIA",
+    "TNF",
+    "TRT"
   ]
 }

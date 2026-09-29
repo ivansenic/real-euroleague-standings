@@ -33,8 +33,14 @@ import { DOMParser } from "xmldom";
 // -----------------------------
 // If you know a certain <game> was decided in overtime, list its <gamenumber>
 // (or whatever unique identifier you prefer). For example:
-const euroleagueOvertimeGameIDs = [86, 87, 168, 173, 221, 239, 253, 263, 273, 283, 330, 333, 337, 340];
-const eurocupOvertimeGameIDs = [9];
+// Keyed by season code, so calculators of past seasons keep correct results.
+const euroleagueOvertimeGameIDs = {
+  E2025: [86, 87, 168, 173, 221, 239, 253, 263, 273, 283, 330, 333, 337, 340],
+  E2026: [],
+};
+const eurocupOvertimeGameIDs = {
+  U2026: [],
+};
 
 // -----------------------------
 // 2) Generate Standings
@@ -204,13 +210,21 @@ function parseData(xmlData, overtimeIDs, leagueGames, filter) {
 }
 
 // Expose the function
-export const generateEuroleagueStandingsFormXml = (xmlData) => {
-  const { teams, games } = parseData(xmlData, euroleagueOvertimeGameIDs, 380);
+export const generateEuroleagueStandingsFormXml = (xmlData, season = "E2026") => {
+  const { teams, games } = parseData(
+    xmlData,
+    euroleagueOvertimeGameIDs[season] ?? [],
+    380
+  );
   const standings = createStandings(teams);
   return { ...standings, games };
 };
-export const generateEurocupStandingsFormXml = (xmlData, group) => {
-  const { teams, games } = parseData(xmlData, eurocupOvertimeGameIDs, 180, {
+export const generateEurocupStandingsFormXml = (
+  xmlData,
+  group,
+  season = "U2026"
+) => {
+  const { teams, games } = parseData(xmlData, eurocupOvertimeGameIDs[season] ?? [], 224, {
     field: "group",
     value: group,
   });
