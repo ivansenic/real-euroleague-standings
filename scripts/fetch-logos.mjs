@@ -10,7 +10,7 @@
  * Requires Python 3 with Pillow (used via child_process to avoid Node native deps).
  */
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -19,6 +19,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LOGO_DIR = join(ROOT, "assets", "team-logos");
 const CELL_SIZE = 90;
+// same convention as the NN-CODE.webp file names
+const CODE_PATTERN = /^[A-Z]+$/;
 
 // competition code -> season code
 const SEASONS = { E: "E2026", U: "U2026" };
@@ -41,6 +43,10 @@ for (const [competition, season] of Object.entries(SEASONS)) {
   }
   const body = await response.json();
   for (const club of body.data ?? body) {
+    if (!CODE_PATTERN.test(club.code ?? "")) {
+      console.warn(`Unexpected club code ${JSON.stringify(club.code)}, skipping`);
+      continue;
+    }
     const crest = club.images?.crest;
     if (!crest) {
       console.warn(`No crest for ${club.code} (${club.name}), skipping`);
@@ -88,13 +94,12 @@ for src, dst in zip(args[0::2], args[1::2]):
     out.save(dst, 'WEBP', quality=90)
 `
   );
-  const args = [pyScriptPath, ...jobs.flat()].map((a) => JSON.stringify(a)).join(" ");
-  execSync(`python3 ${args}`, { stdio: "inherit" });
+  execFileSync("python3", [pyScriptPath, ...jobs.flat()], { stdio: "inherit" });
   console.log(`Updated ${jobs.length} logos`);
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }
 
-execSync(`node ${JSON.stringify(join(ROOT, "scripts", "generate-sprite.mjs"))}`, {
+execFileSync("node", [join(ROOT, "scripts", "generate-sprite.mjs")], {
   stdio: "inherit",
 });
