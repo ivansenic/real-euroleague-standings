@@ -35,7 +35,8 @@ import { DOMParser } from "xmldom";
 // (or whatever unique identifier you prefer). For example:
 // Keyed by season code, so calculators of past seasons keep correct results.
 const euroleagueOvertimeGameIDs = {
-  E2025: [86, 87, 168, 173, 221, 239, 253, 263, 273, 283, 330, 333, 337, 340],
+  E2024: [35, 75, 107, 117, 182, 190, 195, 272, 295, 305],
+  E2025: [86, 87, 168, 173, 221, 239, 253, 263, 273, 283, 330, 333, 337, 340, 359],
   E2026: [],
 };
 const eurocupOvertimeGameIDs = {

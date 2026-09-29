@@ -1,22 +1,34 @@
 export const teamCodeToAbbreviation = (teamCode: string) => {
   switch (teamCode) {
+    case "BAH":
+      return "BKS";
+
     case "BAS":
       return "BKN";
 
-    case "BAH":
-      return "BKS";
+    case "BCR":
+      return "ROM";
 
     case "BES":
       return "BJK";
 
+    case "BGS":
+      return "BUR";
+
     case "BOU":
       return "JLB";
-    
+
+    case "BUR":
+      return "TOF";
+
     case "CAN":
       return "DGC";
 
     case "CLU":
       return "UBT";
+
+    case "FRA":
+      return "SKY";
 
     case "IST":
       return "EFS";
@@ -27,11 +39,14 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
     case "JOV":
       return "CJB";
 
-    case "LKB":
-      return "LIE";
-    
+    case "LEM":
+      return "MSB";
+
     case "LJU":
       return "COL";
+
+    case "LKB":
+      return "LIE";
 
     case "MAD":
       return "RBM";
@@ -42,6 +57,9 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
     case "MIL":
       return "EA7";
 
+    case "MRO":
+      return "RMA";
+
     case "MUN":
       return "BAY";
 
@@ -51,27 +69,39 @@ export const teamCodeToAbbreviation = (teamCode: string) => {
     case "PAN":
       return "PAO";
 
+    case "PAO":
+      return "PBC";
+
     case "PRS":
       return "PBB";
 
     case "RED":
       return "CZV";
 
-    case "ULK":
-      return "FBB";
+    case "RTK":
+      return "ROS";
 
     case "TEL":
       return "MTA";
-    
+
+    case "TNF":
+      return "LLT";
+
     case "TRN":
       return "TRE";
-    
+
+    case "TRT":
+      return "DER";
+
     case "TSO":
       return "SOP";
-    
+
     case "TTK":
       return "TTA";
-    
+
+    case "ULK":
+      return "FBB";
+
     case "VNC":
       return "URV";
 
