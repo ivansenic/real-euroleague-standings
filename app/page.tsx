@@ -1,10 +1,18 @@
 import Footer from "@/components/Footer.jsx";
 import Navigation from "@/components/Navigation.jsx";
+import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
+import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
+import {
+  buildScheduleDays,
+  pickDefaultDateIndex,
+  todayIso,
+} from "@/lib/schedule.js";
 import { Viewport } from "next";
 import Image from "next/image.js";
 import {
   generateEuroleagueStandingsFormXml,
+  parseResultScores,
   parseScheduleGames,
 } from "../standings.js";
 
@@ -16,13 +24,15 @@ export const viewport: Viewport = {
 
 export default async function Home() {
   // consts
-  const [resultsResponse, scheduleResponse] = await Promise.all([
+  const polymarketConfig = POLYMARKET_CONFIG.euroleague;
+  const [resultsResponse, scheduleResponse, odds] = await Promise.all([
     fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
     fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
+    fetchPolymarketOdds(polymarketConfig),
   ]);
   const xml = await resultsResponse.text();
   const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
@@ -31,9 +41,19 @@ export default async function Home() {
     .reduce((a, b) => Math.max(a, b), 0);
 
   const scheduleXml = await scheduleResponse.text();
-  const remainingGames = parseScheduleGames(scheduleXml)
+  const scheduleGames = parseScheduleGames(scheduleXml);
+  const remainingGames = scheduleGames
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
+
+  const scheduleDays = buildScheduleDays({
+    scheduleGames,
+    scores: parseResultScores(xml),
+    odds,
+    config: polymarketConfig,
+    ref: process.env.NEXT_PUBLIC_POLYMARKET_REF ?? "",
+  });
+  const defaultDayIndex = pickDefaultDateIndex(scheduleDays, todayIso());
 
   // state
   return (
@@ -55,6 +75,7 @@ export default async function Home() {
             )}
           </div>
         </div>
+        <ScheduleWidget days={scheduleDays} defaultIndex={defaultDayIndex} />
         {games === 0 && (
           <p className="text-gray-300 w-full text-center p-40">
             No games played yet. Check back later for standings.

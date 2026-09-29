@@ -432,11 +432,55 @@ export function parseScheduleGames(xmlData) {
       item.getElementsByTagName("played")[0]?.textContent === "true";
     const date =
       item.getElementsByTagName("date")[0]?.textContent || "";
+    const time =
+      item.getElementsByTagName("startime")[0]?.textContent || "";
+    const homeName =
+      item.getElementsByTagName("hometeam")[0]?.textContent || "";
+    const awayName =
+      item.getElementsByTagName("awayteam")[0]?.textContent || "";
 
-    games.push({ homeCode, awayCode, gameNumber, gameday, played, date });
+    games.push({
+      homeCode,
+      awayCode,
+      homeName,
+      awayName,
+      gameNumber,
+      gameday,
+      played,
+      date,
+      time,
+    });
   }
 
   return games;
+}
+
+export function parseResultScores(xmlData) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlData, "application/xml");
+  const gameNodes = xmlDoc.getElementsByTagName("game");
+
+  const scores = new Map();
+
+  for (let i = 0; i < gameNodes.length; i++) {
+    const game = gameNodes[i];
+    const text = (tag) => game.getElementsByTagName(tag)[0]?.textContent;
+
+    if (text("played") !== "true") {
+      continue;
+    }
+
+    const gameNumber = parseInt(text("gamenumber"), 10);
+    const homeScore = parseInt(text("homescore"), 10);
+    const awayScore = parseInt(text("awayscore"), 10);
+    if ([gameNumber, homeScore, awayScore].some(Number.isNaN)) {
+      continue;
+    }
+
+    scores.set(gameNumber, { homeScore, awayScore });
+  }
+
+  return scores;
 }
 
 export function createStandings(teams) {

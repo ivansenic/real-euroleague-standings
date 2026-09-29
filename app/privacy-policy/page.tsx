@@ -67,6 +67,29 @@ export default async function PrivacyPolicy() {
             for more details.
           </p>
 
+          <h2 className="font-semibold">Betting Odds and Referral Links</h2>
+          <p>
+            Game win probabilities shown in the schedule are provided by
+            <a
+              href="https://polymarket.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline ml-1"
+            >
+              Polymarket
+            </a>{" "}
+            and are for information only. Links to Polymarket contain our
+            referral code, and we may earn a commission if you sign up or trade
+            after following them. We do not share any of your data with
+            Polymarket; any data you provide there is governed by Polymarket’s
+            own terms and privacy policy.
+          </p>
+          <p>
+            Polymarket is not available in all countries. It is your
+            responsibility to check whether using it is legal where you live.
+            Only for users aged 18 or older. Please gamble responsibly.
+          </p>
+
           <h2 className="font-semibold">Changes</h2>
           <p>
             We may update this policy from time to time by posting a new version
