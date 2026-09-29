@@ -4,6 +4,13 @@ import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
 import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
 import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
+import {
+  COMPETITIONS,
+  EUROCUP_GROUPS,
+  FEED_REVALIDATE,
+  resultsUrl,
+  scheduleUrl,
+} from "@/lib/season.js";
 import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import {
@@ -32,18 +39,15 @@ export const metadata: Metadata = {
   },
 };
 
-// 2026/27: four groups of eight, top four of each group advance to playoffs
-const GROUPS = ["A", "B", "C", "D"];
-
 export default async function Home() {
   // consts
   const polymarketConfig = POLYMARKET_CONFIG.eurocup;
   const [resultsResponse, scheduleResponse, odds] = await Promise.all([
-    fetch("https://api-live.euroleague.net/v1/results?seasoncode=U2026", {
-      next: { revalidate: 5 * 60 },
+    fetch(resultsUrl(COMPETITIONS.eurocup.seasonCode), {
+      next: { revalidate: FEED_REVALIDATE },
     }),
-    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=U2026", {
-      next: { revalidate: 5 * 60 },
+    fetch(scheduleUrl(COMPETITIONS.eurocup.seasonCode), {
+      next: { revalidate: FEED_REVALIDATE },
     }),
     fetchPolymarketOdds(polymarketConfig),
   ]);
@@ -54,8 +58,12 @@ export default async function Home() {
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
-  const groups = GROUPS.map((name) => {
-    const { standings, teams } = generateEurocupStandingsFormXml(xml, name);
+  const groups = EUROCUP_GROUPS.map((name) => {
+    const { standings, teams } = generateEurocupStandingsFormXml(
+      xml,
+      name,
+      COMPETITIONS.eurocup.seasonCode
+    );
     // Split remaining games by group based on team codes in each group
     const codes = new Set(teams.map((t) => t.code));
     const remainingGames = allRemainingGames.filter(

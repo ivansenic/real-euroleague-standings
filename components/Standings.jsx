@@ -8,6 +8,7 @@ import { Field, Label, Switch } from "@headlessui/react";
 import classNames from "classnames";
 import React, { Suspense, useCallback, useState } from "react";
 import { TeamLogo } from "@/components/TeamLogo.jsx";
+import { TeamLink } from "@/components/GameParts.jsx";
 
 const formatScoreDiff = (n) => {
   if (n > 0) {
@@ -394,7 +395,10 @@ const Standings = ({
                     className="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white"
                     title={team.name}
                   >
-                    <div className="flex gap-2 items-center align-middle">
+                    <TeamLink
+                      code={team.code}
+                      className="flex gap-2 items-center align-middle hover:underline"
+                    >
                       <span className="inline-flex items-center justify-center size-8 border-2 border-white rounded-full bg-white overflow-hidden">
                         <TeamLogo code={team.code} size={28} className="shrink-0" />
                       </span>
@@ -402,7 +406,7 @@ const Standings = ({
                         {teamCodeToAbbreviation(team.code)}
                       </span>
                       <span className="hidden sm:block">{team.name}</span>
-                    </div>
+                    </TeamLink>
                   </td>
                   <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-300">
                     {team.wins}
