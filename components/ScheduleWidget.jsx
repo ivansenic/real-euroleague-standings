@@ -3,6 +3,7 @@
 import { TeamLogo } from "@/components/TeamLogo.jsx";
 import {
   formatDayLabel,
+  formatStartTime,
   getGameStatus,
   swipeDirection,
 } from "@/lib/schedule.js";
@@ -23,12 +24,8 @@ const useNow = () => {
   return now;
 };
 
-const formatLocalTime = (startsAt) =>
-  new Date(startsAt).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  });
+// fixed locale and zone so server render and hydration match
+const BERLIN = { locale: "en-GB", timeZone: "Europe/Berlin" };
 
 const Score = ({ score, won, accentBadgeClass }) => (
   <span
@@ -67,12 +64,12 @@ const Middle = ({ game, status, now, accentBadgeClass }) => {
       </span>
     );
   }
-  // server renders the Berlin feed time, the browser switches to local time
-  return (
-    <span className="text-gray-400 tabular-nums">
-      {now !== null && game.startsAt ? formatLocalTime(game.startsAt) : game.time}
-    </span>
-  );
+  // server renders Berlin time, the browser switches to the viewer's zone
+  let time = game.time;
+  if (game.startsAt) {
+    time = formatStartTime(game.startsAt, now === null ? BERLIN : undefined);
+  }
+  return <span className="text-gray-400 tabular-nums">{time}</span>;
 };
 
 const Odds = ({ odds, live, accentClass }) => {
