@@ -78,11 +78,22 @@ export const TeamLink = ({ code, className, children }) => {
   );
 };
 
-export const MatchupRow = ({ game, children }) => (
+// focusCode dims the other team, e.g. the opponent on a team page
+const sideColor = (code, focusCode) => {
+  if (!focusCode) {
+    return "text-gray-200";
+  }
+  return code === focusCode ? "text-white font-medium" : "text-gray-400";
+};
+
+export const MatchupRow = ({ game, focusCode, children }) => (
   <li className="grid grid-cols-[1fr_7rem_1fr] items-center gap-2 border-t border-white/5 py-1.5">
     <TeamLink
       code={game.homeCode}
-      className="flex min-w-0 items-center justify-end gap-2 text-right text-gray-200 hover:text-white"
+      className={classNames(
+        "flex min-w-0 items-center justify-end gap-2 text-right hover:text-white",
+        sideColor(game.homeCode, focusCode)
+      )}
     >
       <TeamName code={game.homeCode} name={game.homeName} />
       <TeamLogo code={game.homeCode} size={20} className="shrink-0" />
@@ -90,7 +101,10 @@ export const MatchupRow = ({ game, children }) => (
     <span className="flex flex-col items-center gap-0.5">{children}</span>
     <TeamLink
       code={game.awayCode}
-      className="flex min-w-0 items-center gap-2 text-gray-200 hover:text-white"
+      className={classNames(
+        "flex min-w-0 items-center gap-2 hover:text-white",
+        sideColor(game.awayCode, focusCode)
+      )}
     >
       <TeamLogo code={game.awayCode} size={20} className="shrink-0" />
       <TeamName code={game.awayCode} name={game.awayName} />

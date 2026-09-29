@@ -70,20 +70,20 @@ const Column = ({ title, empty, children }) => (
   </section>
 );
 
-const TeamGames = ({ last, next, accentClass, accentBadgeClass }) => {
+const TeamGames = ({ code, last, next, accentClass, accentBadgeClass }) => {
   const now = useNow();
   return (
     <div className="mb-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
       <Column title="Last games" empty="No games played yet">
         {last.map((game) => (
-          <MatchupRow key={game.gameNumber} game={game}>
+          <MatchupRow key={game.gameNumber} game={game} focusCode={code}>
             <ResultMiddle game={game} accentBadgeClass={accentBadgeClass} />
           </MatchupRow>
         ))}
       </Column>
       <Column title="Next games" empty="No upcoming games">
         {next.map((game) => (
-          <MatchupRow key={game.gameNumber} game={game}>
+          <MatchupRow key={game.gameNumber} game={game} focusCode={code}>
             <FixtureMiddle game={game} now={now} accentClass={accentClass} />
           </MatchupRow>
         ))}

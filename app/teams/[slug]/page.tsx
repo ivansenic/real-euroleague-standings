@@ -137,6 +137,7 @@ export default async function TeamPage({ params }: Props) {
           </div>
         </div>
         <TeamGames
+          code={team.code}
           last={team.last}
           next={team.next}
           accentClass={competition.accentClass}
