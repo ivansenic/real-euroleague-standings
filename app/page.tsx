@@ -4,6 +4,12 @@ import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
 import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
 import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
+import {
+  COMPETITIONS,
+  FEED_REVALIDATE,
+  resultsUrl,
+  scheduleUrl,
+} from "@/lib/season.js";
 import { Viewport } from "next";
 import Image from "next/image.js";
 import {
@@ -21,11 +27,11 @@ export default async function Home() {
   // consts
   const polymarketConfig = POLYMARKET_CONFIG.euroleague;
   const [resultsResponse, scheduleResponse, odds] = await Promise.all([
-    fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2026", {
-      next: { revalidate: 5 * 60 },
+    fetch(resultsUrl(COMPETITIONS.euroleague.seasonCode), {
+      next: { revalidate: FEED_REVALIDATE },
     }),
-    fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2026", {
-      next: { revalidate: 5 * 60 },
+    fetch(scheduleUrl(COMPETITIONS.euroleague.seasonCode), {
+      next: { revalidate: FEED_REVALIDATE },
     }),
     fetchPolymarketOdds(polymarketConfig),
   ]);
