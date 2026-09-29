@@ -1,42 +1,21 @@
 "use client";
 
-import { TeamLogo } from "@/components/TeamLogo.jsx";
+import {
+  BERLIN,
+  MatchupRow,
+  Odds,
+  Score,
+  useNow,
+} from "@/components/GameParts.jsx";
 import {
   formatDayLabel,
   formatStartTime,
   getGameStatus,
   swipeDirection,
 } from "@/lib/schedule.js";
-import { teamCodeToAbbreviation } from "@/utils/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
-
-// null during server render and hydration, then the current time,
-// refreshed every minute so cached pages switch games to live on time
-const useNow = () => {
-  const [now, setNow] = useState(null);
-  useEffect(() => {
-    setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), 60 * 1000);
-    return () => clearInterval(id);
-  }, []);
-  return now;
-};
-
-// fixed locale and zone so server render and hydration match
-const BERLIN = { locale: "en-GB", timeZone: "Europe/Berlin" };
-
-const Score = ({ score, won, accentBadgeClass }) => (
-  <span
-    className={classNames(
-      "min-w-[2.25rem] rounded px-1 text-center font-semibold tabular-nums",
-      won ? accentBadgeClass : "text-gray-400"
-    )}
-  >
-    {score}
-  </span>
-);
+import { useRef, useState } from "react";
 
 const Middle = ({ game, status, now, accentBadgeClass }) => {
   if (status === "final" && game.homeScore !== undefined) {
@@ -72,64 +51,18 @@ const Middle = ({ game, status, now, accentBadgeClass }) => {
   return <span className="text-gray-400 tabular-nums">{time}</span>;
 };
 
-const Odds = ({ odds, live, accentClass }) => {
-  if (!odds) {
-    return null;
-  }
-  return (
-    <a
-      href={odds.url}
-      target="_blank"
-      rel="sponsored noopener"
-      title={live ? "Live win probability" : "Win probability"}
-      className="rounded-full bg-white/5 px-2 py-0.5 text-xs tabular-nums text-gray-300 hover:bg-white/10"
-    >
-      <span className={odds.home >= odds.away ? accentClass : ""}>
-        {odds.home}%
-      </span>
-      {" · "}
-      <span className={odds.away > odds.home ? accentClass : ""}>
-        {odds.away}%
-      </span>
-    </a>
-  );
-};
-
-const TeamName = ({ code, name }) => (
-  <span className="min-w-0 truncate" title={name || code}>
-    <span className="sm:hidden">{teamCodeToAbbreviation(code)}</span>
-    <span className="hidden sm:inline">
-      {name || teamCodeToAbbreviation(code)}
-    </span>
-  </span>
-);
-
 const GameRow = ({ game, now, accentClass, accentBadgeClass }) => {
   const status = getGameStatus(game, now);
   return (
-    <li className="grid grid-cols-[1fr_7rem_1fr] items-center gap-2 border-t border-white/5 py-1.5">
-      <span className="flex min-w-0 items-center justify-end gap-2 text-right text-gray-200">
-        <TeamName code={game.homeCode} name={game.homeName} />
-        <TeamLogo code={game.homeCode} size={20} className="shrink-0" />
-      </span>
-      <span className="flex flex-col items-center gap-0.5">
-        <Middle
-          game={game}
-          status={status}
-          now={now}
-          accentBadgeClass={accentBadgeClass}
-        />
-        <Odds
-          odds={game.odds}
-          live={status === "live"}
-          accentClass={accentClass}
-        />
-      </span>
-      <span className="flex min-w-0 items-center gap-2 text-gray-200">
-        <TeamLogo code={game.awayCode} size={20} className="shrink-0" />
-        <TeamName code={game.awayCode} name={game.awayName} />
-      </span>
-    </li>
+    <MatchupRow game={game}>
+      <Middle
+        game={game}
+        status={status}
+        now={now}
+        accentBadgeClass={accentBadgeClass}
+      />
+      <Odds odds={game.odds} live={status === "live"} accentClass={accentClass} />
+    </MatchupRow>
   );
 };
 
