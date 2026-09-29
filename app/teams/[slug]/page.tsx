@@ -122,7 +122,9 @@ export default async function TeamPage({ params }: Props) {
             <TeamLogo code={team.code} size={56} className="shrink-0" />
           </span>
           <div>
-            <h1 className="text-lg font-semibold text-white">{team.name}</h1>
+            <h1 className="text-lg font-semibold text-white">
+              {team.fullName || team.name}
+            </h1>
             <p className="text-sm text-gray-300">
               <Link
                 href={competition.standingsPath}
