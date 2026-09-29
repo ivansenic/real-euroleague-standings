@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "calculate": "node standings_print.js",
-    "generate-sprite": "node scripts/generate-sprite.mjs"
+    "generate-sprite": "node scripts/generate-sprite.mjs",
+    "test": "node --test \"lib/**/*.test.js\""
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
