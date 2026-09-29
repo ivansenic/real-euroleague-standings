@@ -5,8 +5,8 @@ import {
   formatDayLabel,
   formatStartTime,
   getGameStatus,
+  isSameDay,
 } from "@/lib/schedule.js";
-import { isSameDay } from "@/lib/team-page.js";
 
 const ResultMiddle = ({ game, accentBadgeClass }) => (
   <>
