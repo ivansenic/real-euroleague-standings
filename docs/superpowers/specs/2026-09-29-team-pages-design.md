@@ -43,17 +43,18 @@ schedule widget to its page.
 
 ## Team registry
 
-`utils/teams.ts`, hand-written:
+`lib/teams.js`, hand-written (JS, not TS, so `node --test` can import it):
 
-```ts
-export const TEAMS: Record<string, { slug: string; name: string }> = {
+```js
+export const TEAMS = {
   MAD: { slug: "real-madrid", name: "Real Madrid" },
   ULK: { slug: "fenerbahce", name: "Fenerbahce" },
   // … all 52 current codes
 };
-export const codeToSlug = (code: string) => TEAMS[code]?.slug;
-export const slugToCode = (slug: string) => …;
-export const teamDisplayName = (code: string) => TEAMS[code]?.name;
+export const codeToSlug = (code) => TEAMS[code]?.slug;
+export const slugToCode = (slug) => …;
+export const teamDisplayName = (code) => TEAMS[code]?.name;
+export const teamPath = (code) => …; // "/teams/<slug>" or undefined
 ```
 
 - Slugs and names are sponsor-free so they stay stable across seasons.
@@ -107,10 +108,10 @@ by competition: orange for EuroLeague, indigo for EuroCup.
 2. **Games**, two columns on `sm+`, stacked on mobile (results first):
    - *Last games:* rows like the schedule widget with the final score (winner
      highlighted in accent), date below the score.
-   - *Next games:* rows like the schedule widget with odds pill, date below;
-     start time shown only when the game is today (viewer's zone in the
-     browser, Berlin on server render, same as the widget). Live games show
-     the LIVE badge.
+   - *Next games:* rows like the schedule widget with odds pill. The centre
+     shows the date, or the start time when the game is today in the
+     viewer's zone (decided in the browser after mount; server render shows
+     the date). Live games show the LIVE badge.
    - Empty column states: "No games played yet" / "No upcoming games".
 3. **Known tiebreakers**, two columns: *Won* and *Lost*. Each row: opponent
    logo + name (linked), h2h record and point diff (`2-0 · +17`,
@@ -140,8 +141,10 @@ both widget and team page use them.
 
 ## Error handling
 
-- Feed fetch fails / returns garbage: page renders header from registry and
-  empty states (same tolerance as league pages). Odds failure → no odds pills
+- Feed fetch fails / returns an empty body: treated as an empty feed
+  (`<empty/>`), because the XML parser throws on an empty string. Page
+  renders header from registry and empty states. A team whose code is in
+  neither schedule feed → 404. Odds failure → no odds pills
   (existing behaviour of `fetchPolymarketOdds`).
 
 ## Testing
@@ -149,7 +152,7 @@ both widget and team page use them.
 - Unit (`lib/team-page.test.js`): games split and ordering, fewer than 3
   games, live game counted as next, tiebreaker classification (2-0, 0-2,
   1-1 ±, 1-1 zero diff excluded, single game excluded), sorting.
-- Unit (`utils/teams.test.*`): slugs unique, `slugToCode(codeToSlug(c))`
+- Unit (`lib/teams.test.js`): slugs unique, `slugToCode(codeToSlug(c))`
   round-trip, registry matches the 52 codes verified above (hardcoded list in
   the test, no network).
 - Manual: `yarn build`, open an EL team, a EuroCup team, a bad slug (404);
