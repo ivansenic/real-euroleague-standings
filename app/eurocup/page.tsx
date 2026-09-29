@@ -1,6 +1,9 @@
 import Footer from "@/components/Footer.jsx";
 import Navigation from "@/components/Navigation.jsx";
+import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
+import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
+import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
 import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import {
@@ -34,17 +37,20 @@ const GROUPS = ["A", "B", "C", "D"];
 
 export default async function Home() {
   // consts
-  const [resultsResponse, scheduleResponse] = await Promise.all([
+  const polymarketConfig = POLYMARKET_CONFIG.eurocup;
+  const [resultsResponse, scheduleResponse, odds] = await Promise.all([
     fetch("https://api-live.euroleague.net/v1/results?seasoncode=U2026", {
       next: { revalidate: 5 * 60 },
     }),
     fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=U2026", {
       next: { revalidate: 5 * 60 },
     }),
+    fetchPolymarketOdds(polymarketConfig),
   ]);
   const xml = await resultsResponse.text();
   const scheduleXml = await scheduleResponse.text();
-  const allRemainingGames = parseScheduleGames(scheduleXml)
+  const scheduleGames = parseScheduleGames(scheduleXml);
+  const allRemainingGames = scheduleGames
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
@@ -62,6 +68,13 @@ export default async function Home() {
   });
 
   const games = Math.max(...groups.map((g) => g.games));
+
+  const scheduleWidgetProps = await getScheduleWidgetProps({
+    scheduleGames,
+    resultsXml: xml,
+    config: polymarketConfig,
+    odds,
+  });
 
   // state
   return (
@@ -83,6 +96,11 @@ export default async function Home() {
             )}
           </div>
         </div>
+        <ScheduleWidget
+          {...scheduleWidgetProps}
+          accentClass="text-indigo-400"
+          accentBadgeClass="bg-indigo-400/15 text-indigo-400"
+        />
         {games === 0 && (
           <p className="text-gray-300 w-full text-center p-40">
             No games played yet. Check back later for standings.

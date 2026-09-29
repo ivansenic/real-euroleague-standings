@@ -3,16 +3,11 @@ import Navigation from "@/components/Navigation.jsx";
 import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
 import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
-import {
-  buildScheduleDays,
-  pickDefaultDateIndex,
-  todayIso,
-} from "@/lib/schedule.js";
+import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
 import { Viewport } from "next";
 import Image from "next/image.js";
 import {
   generateEuroleagueStandingsFormXml,
-  parseResultScores,
   parseScheduleGames,
 } from "../standings.js";
 
@@ -46,14 +41,12 @@ export default async function Home() {
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
-  const scheduleDays = buildScheduleDays({
+  const scheduleWidgetProps = await getScheduleWidgetProps({
     scheduleGames,
-    scores: parseResultScores(xml),
-    odds,
+    resultsXml: xml,
     config: polymarketConfig,
-    ref: process.env.NEXT_PUBLIC_POLYMARKET_REF ?? "",
+    odds,
   });
-  const defaultDayIndex = pickDefaultDateIndex(scheduleDays, todayIso());
 
   // state
   return (
@@ -75,7 +68,7 @@ export default async function Home() {
             )}
           </div>
         </div>
-        <ScheduleWidget days={scheduleDays} defaultIndex={defaultDayIndex} />
+        <ScheduleWidget {...scheduleWidgetProps} />
         {games === 0 && (
           <p className="text-gray-300 w-full text-center p-40">
             No games played yet. Check back later for standings.
