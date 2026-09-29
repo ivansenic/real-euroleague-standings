@@ -1,6 +1,9 @@
 import Footer from "@/components/Footer.jsx";
 import Navigation from "@/components/Navigation.jsx";
+import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
+import { POLYMARKET_CONFIG } from "@/lib/polymarket.js";
+import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
 import { Metadata, Viewport } from "next";
 import Image from "next/image.js";
 import {
@@ -44,7 +47,8 @@ export default async function Home() {
   ]);
   const xml = await resultsResponse.text();
   const scheduleXml = await scheduleResponse.text();
-  const allRemainingGames = parseScheduleGames(scheduleXml)
+  const scheduleGames = parseScheduleGames(scheduleXml);
+  const allRemainingGames = scheduleGames
     .filter((g) => !g.played)
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
@@ -62,6 +66,12 @@ export default async function Home() {
   });
 
   const games = Math.max(...groups.map((g) => g.games));
+
+  const scheduleWidgetProps = await getScheduleWidgetProps({
+    scheduleGames,
+    resultsXml: xml,
+    config: POLYMARKET_CONFIG.eurocup,
+  });
 
   // state
   return (
@@ -83,6 +93,11 @@ export default async function Home() {
             )}
           </div>
         </div>
+        <ScheduleWidget
+          {...scheduleWidgetProps}
+          accentClass="text-indigo-400"
+          accentBadgeClass="bg-indigo-400/15 text-indigo-400"
+        />
         {games === 0 && (
           <p className="text-gray-300 w-full text-center p-40">
             No games played yet. Check back later for standings.
