@@ -36,7 +36,10 @@ export default async function Home() {
     fetchPolymarketOdds(polymarketConfig),
   ]);
   const xml = await resultsResponse.text();
-  const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
+  const { standings, teams } = generateEuroleagueStandingsFormXml(
+    xml,
+    COMPETITIONS.euroleague.seasonCode
+  );
   const games = standings
     .map((team) => team.wins + team.losses)
     .reduce((a, b) => Math.max(a, b), 0);

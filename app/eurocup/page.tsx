@@ -59,7 +59,11 @@ export default async function Home() {
     .sort((a, b) => a.gameday - b.gameday || a.gameNumber - b.gameNumber);
 
   const groups = EUROCUP_GROUPS.map((name) => {
-    const { standings, teams } = generateEurocupStandingsFormXml(xml, name);
+    const { standings, teams } = generateEurocupStandingsFormXml(
+      xml,
+      name,
+      COMPETITIONS.eurocup.seasonCode
+    );
     // Split remaining games by group based on team codes in each group
     const codes = new Set(teams.map((t) => t.code));
     const remainingGames = allRemainingGames.filter(
