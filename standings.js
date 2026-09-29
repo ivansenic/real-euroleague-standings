@@ -434,8 +434,22 @@ export function parseScheduleGames(xmlData) {
       item.getElementsByTagName("date")[0]?.textContent || "";
     const time =
       item.getElementsByTagName("startime")[0]?.textContent || "";
+    const homeName =
+      item.getElementsByTagName("hometeam")[0]?.textContent || "";
+    const awayName =
+      item.getElementsByTagName("awayteam")[0]?.textContent || "";
 
-    games.push({ homeCode, awayCode, gameNumber, gameday, played, date, time });
+    games.push({
+      homeCode,
+      awayCode,
+      homeName,
+      awayName,
+      gameNumber,
+      gameday,
+      played,
+      date,
+      time,
+    });
   }
 
   return games;
