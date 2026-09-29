@@ -59,7 +59,7 @@ const Middle = ({ game, status, now, accentBadgeClass }) => {
   if (status === "live") {
     return (
       <span className="flex items-center gap-1.5 text-xs font-semibold text-red-400">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+        <span className="h-2 w-2 motion-safe:animate-pulse rounded-full bg-red-500" />
         LIVE
       </span>
     );

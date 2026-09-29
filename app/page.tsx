@@ -2,7 +2,7 @@ import Footer from "@/components/Footer.jsx";
 import Navigation from "@/components/Navigation.jsx";
 import ScheduleWidget from "@/components/ScheduleWidget.jsx";
 import Standings from "@/components/Standings.jsx";
-import { POLYMARKET_CONFIG } from "@/lib/polymarket.js";
+import { fetchPolymarketOdds, POLYMARKET_CONFIG } from "@/lib/polymarket.js";
 import { getScheduleWidgetProps } from "@/lib/schedule-widget.js";
 import { Viewport } from "next";
 import Image from "next/image.js";
@@ -19,13 +19,15 @@ export const viewport: Viewport = {
 
 export default async function Home() {
   // consts
-  const [resultsResponse, scheduleResponse] = await Promise.all([
+  const polymarketConfig = POLYMARKET_CONFIG.euroleague;
+  const [resultsResponse, scheduleResponse, odds] = await Promise.all([
     fetch("https://api-live.euroleague.net/v1/results?seasoncode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
     fetch("https://api-live.euroleague.net/v1/schedules?seasonCode=E2026", {
       next: { revalidate: 5 * 60 },
     }),
+    fetchPolymarketOdds(polymarketConfig),
   ]);
   const xml = await resultsResponse.text();
   const { standings, teams } = generateEuroleagueStandingsFormXml(xml);
@@ -42,7 +44,8 @@ export default async function Home() {
   const scheduleWidgetProps = await getScheduleWidgetProps({
     scheduleGames,
     resultsXml: xml,
-    config: POLYMARKET_CONFIG.euroleague,
+    config: polymarketConfig,
+    odds,
   });
 
   // state
