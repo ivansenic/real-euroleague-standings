@@ -83,7 +83,7 @@ const sideColor = (code, focusCode) => {
   if (!focusCode) {
     return "text-gray-200";
   }
-  return code === focusCode ? "text-white font-medium" : "text-gray-400";
+  return code === focusCode ? "text-white font-medium" : "text-gray-300";
 };
 
 export const MatchupRow = ({ game, focusCode, children }) => (
