@@ -10,7 +10,8 @@
     "lint": "next lint",
     "calculate": "node standings_print.js",
     "generate-sprite": "node scripts/generate-sprite.mjs",
-    "test": "node --test \"lib/**/*.test.js\""
+    "test": "node --test \"lib/**/*.test.js\"",
+    "fetch-logos": "node scripts/fetch-logos.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
