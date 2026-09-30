@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer.jsx";
-import KnownTiebreakers from "@/components/KnownTiebreakers.jsx";
+import Tiebreakers from "@/components/Tiebreakers.jsx";
 import Navigation from "@/components/Navigation.jsx";
 import TeamGames from "@/components/TeamGames.jsx";
 import { TeamLogo } from "@/components/TeamLogo.jsx";
@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         standing.group ? `group ${standing.group}` : "the standings"
       }.`
     : "";
-  const description = `${name} in the ${competition.name} ${SEASON_LABEL}.${record} Latest results, upcoming games and known head-to-head tiebreakers.`;
+  const description = `${name} in the ${competition.name} ${SEASON_LABEL}.${record} Latest results, upcoming games and head-to-head tiebreakers.`;
   const url = `${SITE_URL}/teams/${slug}`;
   return {
     title,
@@ -145,7 +145,7 @@ export default async function TeamPage({ params }: Props) {
           accentClass={competition.accentClass}
           accentBadgeClass={competition.accentBadgeClass}
         />
-        <KnownTiebreakers
+        <Tiebreakers
           positive={team.tiebreakers.positive}
           negative={team.tiebreakers.negative}
         />

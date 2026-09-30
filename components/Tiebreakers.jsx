@@ -25,7 +25,15 @@ const List = ({ title, entries }) => (
                 {teamDisplayName(entry.code) ?? entry.code}
               </span>
             </TeamLink>
-            <span className="shrink-0 tabular-nums text-gray-300">
+            <span className="flex shrink-0 items-center gap-2 tabular-nums text-gray-300">
+              {entry.final && (
+                <span
+                  title="Both games played, tiebreaker decided"
+                  className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-200"
+                >
+                  Final
+                </span>
+              )}
               {entry.wins}-{entry.losses} · {formatDiff(entry.diff)}
             </span>
           </li>
@@ -35,11 +43,11 @@ const List = ({ title, entries }) => (
   </section>
 );
 
-const KnownTiebreakers = ({ positive, negative }) => (
+const Tiebreakers = ({ positive, negative }) => (
   <div className="mb-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-    <List title="Tiebreakers won" entries={positive} />
-    <List title="Tiebreakers lost" entries={negative} />
+    <List title="Positive tiebreakers" entries={positive} />
+    <List title="Negative tiebreakers" entries={negative} />
   </div>
 );
 
-export default KnownTiebreakers;
+export default Tiebreakers;
