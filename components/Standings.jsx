@@ -262,7 +262,7 @@ const Standings = ({
           {predictionModeEnabled && (
             <div className="w-full mt-4">
               {predictionModeTeams?.length > 1 && (
-                <div className="flex flex-col lg:flex-row lg:gap-8">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
                   <SmallTable
                     title="Tie-break mini standings"
                     details={getPredictionDetails(
@@ -468,7 +468,7 @@ const Standings = ({
                   <tr className="bg-white/5" key={`${team.code}-details`}>
                     <td className="hidden sm:table-cell"></td>
                     <td colSpan="9" className="px-2 py-4 text-sm w-max-content">
-                      <div className="flex flex-col lg:flex-row lg:gap-8">
+                      <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
                         <SmallTable
                           title="Tie-break opponent"
                           details={tieBreakerDetails}
@@ -543,10 +543,10 @@ const SmallTable = (props) => {
         {details.map((opp) => {
           return (
             <tr key={`${opp.code}-h2h`}>
-              <td className="px-3 py-2 text-sm text-gray-300">{opp.name}</td>
-              <td className="px-3 py-2 text-sm text-gray-300">{opp.wins}</td>
-              <td className="px-3 py-2 text-sm text-gray-300">{opp.losses}</td>
-              <td className="px-3 py-2 text-sm text-gray-300">
+              <td className="px-3 py-1 text-sm text-gray-300">{opp.name}</td>
+              <td className="px-3 py-1 text-sm text-gray-300">{opp.wins}</td>
+              <td className="px-3 py-1 text-sm text-gray-300">{opp.losses}</td>
+              <td className="px-3 py-1 text-sm text-gray-300">
                 {formatScoreDiff(opp.ptsFor - opp.ptsAgainst)}
               </td>
             </tr>
